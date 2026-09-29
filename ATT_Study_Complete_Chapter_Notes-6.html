@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AT Study — Class 10</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#09070f;color:#fff}
+header{position:sticky;top:0;z-index:10;background:#120d1d;border-bottom:1px solid #302044;padding:14px 5%;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:28px;font-weight:900;color:#b968ff}.nav{display:flex;gap:8px;flex-wrap:wrap}.nav button,.btn{border:0;background:#211532;color:#eee;padding:10px 14px;border-radius:10px;cursor:pointer}.nav button:hover,.btn:hover{background:#7137a8}
+.hero{padding:55px 6%;text-align:center;background:radial-gradient(circle at top,#42156c,#170c25 45%,#09070f 80%)}
+.hero h1{font-size:clamp(38px,9vw,68px);margin:8px}.hero h1 span{color:#b968ff}.hero p{color:#c9bed2}.btn.primary{background:#9b4de8;font-weight:bold;margin-top:15px}
+main{max-width:1100px;margin:auto;padding:25px 5%}.view{display:none}.view.active{display:block}
+h2{margin-top:8px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+.card{background:#151020;border:1px solid #302044;border-radius:16px;padding:20px;cursor:pointer}.card:hover{border-color:#9b4de8;transform:translateY(-2px)}.card p{color:#aaa0b2;line-height:1.5}.tag{font-size:12px;color:#c38aff}
+.search{width:100%;padding:14px;border-radius:12px;border:1px solid #39264d;background:#110c18;color:#fff;margin:12px 0 20px}
+.back{margin-bottom:18px}.note{background:#120d1b;border:1px solid #35234a;border-radius:15px;padding:20px;line-height:1.65}.note h3{color:#c17cff}.note li{margin:8px 0}
+.option{display:block;width:100%;text-align:left;margin:9px 0;background:#1b1426;border:1px solid #3b2a4f;color:white;padding:13px;border-radius:10px;cursor:pointer}.option:hover{background:#2b1b3d}
+.result{padding:15px;border-radius:12px;background:#191126;margin-top:15px}.hidden{display:none}
+footer{text-align:center;color:#766b7d;padding:30px}
+
+.note-page{min-height:760px;padding:24px;margin:0 0 18px;background:#120d1b;border:1px solid #35234a;border-radius:15px;line-height:1.75}
+.note-page h3{color:#c17cff;margin-top:0}.page-label{font-size:12px;color:#8f7ba4;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.practice-page{min-height:620px;padding:24px;margin:0 0 18px;background:#100b17;border:1px solid #4a3060;border-radius:15px;line-height:1.7}
+.practice-page h3{color:#d09aff}.practice-q{padding:14px;margin:12px 0;background:#1b1326;border-radius:10px}
+.att-hero-logo{display:inline-flex;align-items:center;gap:10px;margin-bottom:10px;color:var(--text);font-size:15px;letter-spacing:1px}.att-hero-logo .att-mark{width:44px;height:44px}.notes-brand{display:flex;align-items:center;gap:10px;margin:4px 0 12px}.notes-brand .att-mark{width:34px;height:34px}.notes-brand b{letter-spacing:.8px}
+@media print{header,.nav,.btn{display:none!important}.view{display:none!important}.view.active{display:block}.note-page,.practice-page{page-break-after:always;border:0;min-height:100vh}}
+
+/* ===== AT Study V3 Upgrade ===== */
+:root{--bg:#09070f;--panel:#151020;--panel2:#100b17;--border:#302044;--text:#fff;--muted:#aaa0b2;--accent:#b968ff;--accent2:#9b4de8}
+body.light{--bg:#f6f4fa;--panel:#fff;--panel2:#f1edf7;--border:#ddd1e9;--text:#17121d;--muted:#655b6d;--accent:#7a35c8;--accent2:#8e43dc;background:var(--bg);color:var(--text)}
+body{background:var(--bg);color:var(--text);transition:.25s}
+header{backdrop-filter:blur(12px);background:color-mix(in srgb,var(--panel) 88%,transparent);gap:12px}
+.logo{letter-spacing:.5px}
+.nav{justify-content:flex-end}
+.nav button,.btn{background:var(--panel);color:var(--text);border:1px solid var(--border)}
+.nav button:hover,.btn:hover{background:var(--accent2);border-color:var(--accent2);color:#fff}
+.hero{position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;width:320px;height:320px;border-radius:50%;background:var(--accent);opacity:.08;filter:blur(25px);right:-80px;top:-120px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:20px 0}
+.stat{background:var(--panel);border:1px solid var(--border);border-radius:15px;padding:16px}
+.stat strong{display:block;font-size:26px;color:var(--accent)}
+.stat small{color:var(--muted)}
+.progress{height:8px;background:var(--panel2);border-radius:99px;overflow:hidden;margin-top:10px}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:99px;transition:width .3s}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}
+.toolbar .search{flex:1;min-width:220px;margin:0}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:6px 9px;border-radius:99px;background:var(--panel2);border:1px solid var(--border);color:var(--muted);font-size:12px}
+.favorite{float:right;border:0;background:transparent;color:#87798e;font-size:20px;cursor:pointer}
+.favorite.active{color:#ffca45}
+.card{background:var(--panel);border-color:var(--border);color:var(--text)}
+.card p{color:var(--muted)}
+.note-page,.practice-page,.result{background:var(--panel);border-color:var(--border)}
+.note-page h3,.practice-page h3{color:var(--accent)}
+.empty{padding:35px;text-align:center;color:var(--muted);border:1px dashed var(--border);border-radius:15px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#1b1326;color:#fff;border:1px solid var(--border);padding:11px 16px;border-radius:12px;z-index:99;transition:.25s}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#homeActions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+@media(max-width:650px){
+ header{padding:10px 4%;align-items:flex-start}
+ .logo{font-size:24px;display:flex;align-items:center;gap:9px}.att-mark{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(135deg,#9f4dff,#5b2cff);color:#fff;font-weight:900;box-shadow:0 6px 18px rgba(124,58,237,.28);position:relative}.att-mark:after{content:"";position:absolute;inset:6px;border:2px solid rgba(255,255,255,.45);border-radius:8px}.att-word{font-weight:900;letter-spacing:.5px}.brand-sub{font-size:10px;color:var(--muted);font-weight:800;letter-spacing:1px;margin-top:2px}.nav{gap:5px}
+ .nav button{padding:8px 9px;font-size:12px}
+ .hero{padding:42px 5%}
+ .hero h1{font-size:44px}
+ main{padding:20px 4%}
+ .note-page,.practice-page{min-height:auto}
+}
+
+
+/* ===== Full Notes Upgrade ===== */
+.full-notes{display:grid;gap:18px}
+.full-note-page{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:26px;line-height:1.8;box-shadow:0 8px 30px rgba(0,0,0,.08)}
+.full-note-page .page-label{font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:1.4px;font-weight:800}
+.full-note-page h3{font-size:25px;color:var(--accent);margin:8px 0 16px}
+.full-note-page h4{color:var(--text);margin:18px 0 7px}
+.full-note-page .topic-heading{font-size:22px;color:var(--accent);margin:4px 0 12px}
+.full-note-page .concept-label{font-size:11px;font-weight:800;letter-spacing:1.2px;color:var(--accent);margin-bottom:7px}
+.full-note-page .big-explain{font-size:17px;line-height:1.85;color:var(--text)}
+.concept-card{background:var(--panel2);border:1px solid var(--border);border-radius:13px;padding:16px;margin:12px 0}
+.full-note-page p{color:var(--muted);margin:8px 0}
+.full-note-page ul,.full-note-page ol{color:var(--muted);padding-left:24px}
+.full-note-page li{margin:8px 0}
+.keybox{background:var(--panel2);border-left:4px solid var(--accent);padding:14px 16px;border-radius:10px;margin:15px 0}
+.formulabox{font-family:Georgia,serif;font-size:19px;background:var(--panel2);border:1px solid var(--border);padding:15px;border-radius:12px;margin:12px 0}
+.exambox{background:linear-gradient(135deg,var(--panel2),var(--panel));border:1px solid var(--border);padding:16px;border-radius:13px}
+.chapter-nav{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 20px}
+.chapter-nav .btn{font-size:13px}
+
+
+@media print{
+ body{background:#fff!important;color:#111!important}
+ .full-note-page{box-shadow:none;border:0;border-radius:0;page-break-after:always;color:#111!important}
+ .full-note-page p,.full-note-page li{color:#222!important}
+ .chapter-nav,.back,.favorite,header,footer,#toast,.practice-page button{display:none!important}
+ .full-notes{display:block}
+}
+
+</style>
+</head>
+<body>
+<header>
+<div class="logo"><span class="att-mark">A</span><span><span class="att-word">AT STUDY</span><span class="brand-sub">ADITYA THAKUR • CLASS 10 • LEARN SMART</span></span></div>
+<div class="nav">
+<button onclick="show('home')">Home</button>
+<button onclick="show('subjects');renderSubjects()">Subjects</button>
+<button onclick="show('quiz')">Quiz</button>
+<button onclick="show('board');renderBoard()">Board</button>
+<button onclick="show('progress');renderProgress()">Progress</button>
+<button onclick="toggleTheme()" title="Toggle theme">☀️/🌙</button>
+</div>
+</header>
+
+<div id="home" class="view active">
+<section class="hero"><div class="att-hero-logo"><span class="att-mark">A</span><b>AT STUDY</b></div><h1>ATT <span>Study</span></h1><p>Learn • Practice • Improve</p><p>Class 10 study material in one place.</p><button class="btn primary" onclick="show('subjects')">Start Learning →</button></section>
+<main><h2>What you can study</h2><div class="grid">
+<div class="card" onclick="openSubject('Maths')">➗ <h3>Mathematics</h3><p>Chapter-wise concepts and formulas.</p></div>
+<div class="card" onclick="openSubject('Science')">🔬 <h3>Science</h3><p>Physics, Chemistry and Biology notes.</p></div>
+<div class="card" onclick="openSubject('SST')">🌍 <h3>Social Science</h3><p>History, Geography, Civics and Economics.</p></div>
+<div class="card" onclick="openSubject('English')">📖 <h3>English</h3><p>Literature and exam-focused Q&A.</p></div>
+</div>
+<div id="homeActions">
+<button class="btn" onclick="show('progress');renderProgress()">📊 My Progress</button>
+<button class="btn" onclick="show('quiz');startQuiz()">⚡ Quick Quiz</button>
+</div>
+<div class="stats" id="homeStats"></div>
+</main></div>
+
+<div id="subjects" class="view"><main><h2>📚 Class 10 Subjects</h2>
+<div class="toolbar"><input id="search" aria-label="Search subjects and chapters" class="search" placeholder="Search subject or chapter..." oninput="filterCards()"><button class="btn" onclick="showFavorites()">⭐ Saved</button></div><div id="subjectGrid" class="grid"></div></main></div>
+
+<div id="notes" class="view"><main><button class="btn back" onclick="show('subjects')">← Back</button><div id="noteBox"></div></main></div>
+
+<div id="board" class="view"><main>
+<h2>📝 Board Exam Questions</h2>
+<p class="tag">Chapter-wise exam practice • Board-style questions</p>
+<p style="color:#aaa0b2">These are board-style practice questions designed for revision. They are not claimed to be verbatim previous-year questions.</p>
+<input id="boardSearch" aria-label="Search board questions" class="search" placeholder="Search subject or chapter..." oninput="filterBoard()">
+<div id="boardGrid" class="grid"></div>
+</main></div>
+
+<div id="progress" class="view"><main>
+<button class="btn back" onclick="show('home')">← Home</button>
+<h2>📊 My Study Dashboard</h2>
+<p class="tag">Your activity is saved on this device.</p>
+<div class="stats" id="progressStats"></div>
+<div class="note">
+<h3>Chapter Progress</h3>
+<div id="progressList"></div>
+</div>
+<div class="toolbar">
+<button class="btn" onclick="resetProgress()">Reset Progress</button>
+<button class="btn" onclick="showFavorites()">⭐ View Saved Notes</button>
+</div>
+</main></div>
+
+<div id="quiz" class="view"><main>
+<h2>🧠 Quick Quiz</h2><p class="tag">Class 10 mixed practice</p>
+<div class="toolbar">
+<span class="pill">🎯 Instant feedback</span><span class="pill">🔀 Random order</span><span class="pill">💾 Score saved</span>
+</div>
+<div id="quizBox"><div class="empty">Tap Start Quiz to begin.</div></div>
+<button class="btn primary" onclick="startQuiz()">Start / Restart Quiz</button>
+</main></div>
+
+<script>
+const data={
+Maths:[
+["Real Numbers","Easy Explanation",
+"Real numbers include both rational and irrational numbers. Rational numbers can be written in the form p/q, where q is not zero. Irrational numbers cannot be written in this form, such as √2 and √3.",
+"Euclid's division lemma says a = bq + r, where 0 ≤ r < b. Example: 17 = 5×3 + 2. The Fundamental Theorem of Arithmetic says every composite number can be written as a product of primes in a unique way, apart from the order of factors.",
+"Remember: HCF is the greatest common factor, while LCM is the smallest common multiple. For two positive integers, HCF × LCM = product of the two numbers."],
+["Polynomials","Easy Explanation",
+"A polynomial is an algebraic expression made using variables and constants, where the powers of variables are whole numbers. For example, 2x² + 3x − 5 is a quadratic polynomial.",
+"The zeroes of a polynomial are the values of x that make the polynomial equal to zero. For ax² + bx + c, the sum of zeroes is −b/a and the product is c/a.",
+"Example: For x² − 5x + 6, the zeroes are 2 and 3 because (x−2)(x−3)=0."],
+["Pair of Linear Equations","Easy Explanation",
+"A pair of linear equations in two variables contains two equations such as 2x + 3y = 7 and x − y = 1. Their solution is the point that satisfies both equations.",
+"Graphically, the equations are represented by two straight lines. Intersecting lines have one solution, parallel lines have no solution, and coincident lines have infinitely many solutions.",
+"To solve them, we can use substitution, elimination or graphical methods. Always check the final values in both equations."],
+["Quadratic Equations","Easy Explanation",
+"A quadratic equation is an equation of the form ax² + bx + c = 0, where a is not zero. The highest power of the variable is 2.",
+"The quadratic formula is x = (−b ± √(b² − 4ac))/(2a). The expression b² − 4ac is called the discriminant.",
+"If the discriminant is positive, there are two distinct real roots. If it is zero, there are equal real roots. If it is negative, there are no real roots."]
+],
+Science:[
+["Chemical Reactions and Equations","Easy Explanation",
+"A chemical reaction happens when one or more substances change into new substances with different properties. Signs of a reaction may include a colour change, temperature change, gas formation or formation of a precipitate.",
+"A chemical equation represents the reaction using symbols and formulae. It must be balanced because atoms are neither created nor destroyed during a chemical reaction.",
+"Example: 2H₂ + O₂ → 2H₂O. There are two hydrogen atoms and two oxygen atoms on both sides."],
+["Acids, Bases and Salts","Easy Explanation",
+"Acids are substances that produce hydrogen ions in aqueous solution, while bases produce hydroxide ions. Lemon juice and vinegar are common acidic substances; soap solution is commonly basic.",
+"The pH scale is used to describe how acidic or basic a solution is. At school level, pH 7 is neutral, below 7 is acidic and above 7 is basic.",
+"Neutralisation is the reaction between an acid and a base to form salt and water. Example: HCl + NaOH → NaCl + H₂O."],
+["Life Processes","Easy Explanation",
+"Life processes are activities needed to maintain life. In Class 10, the main processes are nutrition, respiration, transportation and excretion.",
+"Plants prepare food by photosynthesis using carbon dioxide and water in the presence of sunlight and chlorophyll. Animals obtain energy by breaking down food during respiration.",
+"Remember: the circulatory system transports materials around the body, while the excretory system removes metabolic wastes."],
+["Light – Reflection and Refraction","Easy Explanation",
+"Reflection is the bouncing back of light from a surface. Refraction is the change in direction of light when light passes from one transparent medium to another.",
+"The laws of reflection state that the angle of incidence equals the angle of reflection, and the incident ray, reflected ray and normal lie in the same plane.",
+"For spherical mirrors, the mirror formula is 1/f = 1/v + 1/u. Magnification is m = −v/u."]
+],
+SST:[
+["Nationalism in India","Easy Explanation",
+"Nationalism in India grew as people united against colonial rule. Different groups joined movements for different reasons, but the common struggle helped create a feeling of collective belonging.",
+"Gandhi used methods such as non-violent resistance and satyagraha. The Non-Cooperation Movement and Civil Disobedience Movement became important mass movements.",
+"Important idea: national identity developed through movements, symbols, folklore, history and shared experiences."],
+["The Making of a Global World","Easy Explanation",
+"The global world developed through the movement of goods, people, money and ideas across countries. Trade routes and migration connected distant regions.",
+"Industrialisation increased demand for raw materials and markets. Later, the First World War, the Great Depression and the Second World War disrupted the world economy.",
+"Remember: globalisation is not only a modern phenomenon; its roots can be traced to earlier trade, migration and economic connections."],
+["Resources and Development","Easy Explanation",
+"A resource is anything that has utility, value and can satisfy human needs. Resources may be natural, human-made or human resources.",
+"Resource planning means identifying resources, planning their proper use and matching development plans with resource availability. Conservation is important because many resources are limited.",
+"Resources can be classified by origin, exhaustibility, ownership and status of development."],
+["Power Sharing","Easy Explanation",
+"Power sharing means distributing power among different organs, levels and groups in a democracy. It helps prevent concentration of power.",
+"Power may be shared among the legislature, executive and judiciary; between central and state governments; among social groups; and among political parties and pressure groups.",
+"Power sharing is important because it can reduce conflict, respect diversity and strengthen democratic participation."]
+],
+English:[
+["A Triumph of Surgery","Easy Explanation",
+"Tricki is a pet dog whose owner gives him too much food and very little exercise. As a result, he becomes unhealthy and inactive.",
+"The veterinary staff change Tricki's routine by giving him controlled food and regular activity. He gradually becomes healthier and active again.",
+"Main lesson: love and care should be balanced with proper food, exercise and discipline."],
+["The Thief's Story","Easy Explanation",
+"Hari Singh is a young thief who meets Anil, a simple and trusting writer. Anil gives him work and promises to teach him how to read and write.",
+"Hari steals money but later returns it because he understands that education and Anil's trust can give him a better future.",
+"Main lesson: trust, education and kindness can encourage a person to change."],
+["The Midnight Visitor","Easy Explanation",
+"Ausable is a secret agent who does not look like the typical action hero. When Max threatens him, Ausable uses intelligence instead of physical force.",
+"He invents a believable story about a balcony and uses the arrival of a waiter to make Max believe the story. Max panics and makes a mistake.",
+"Main lesson: presence of mind and intelligence can solve difficult situations."],
+["A Tiger in the Zoo","Easy Explanation",
+"The poem contrasts a tiger's natural life in the jungle with its life inside a cage. In the jungle, the tiger would move freely and hunt naturally.",
+"In the cage, the tiger is restricted and cannot live according to its natural behaviour. The contrast makes the loss of freedom clear.",
+"Main idea: the poem highlights freedom, captivity and the difference between natural life and confinement."]
+]
+};
+
+function show(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+const boardQuestions={
+Maths:[
+["Real Numbers","1. Use Euclid's division algorithm to find the HCF of two given integers.","2. Prove that a given number is irrational."],
+["Polynomials","1. Find the zeroes of a quadratic polynomial and verify the relationship between zeroes and coefficients.","2. Form a quadratic polynomial when its zeroes are given."],
+["Pair of Linear Equations","1. Solve a pair of linear equations using elimination or substitution.","2. Determine the nature of solutions of a pair of equations."],
+["Quadratic Equations","1. Solve a quadratic equation by factorisation.","2. Solve a quadratic equation using the quadratic formula and state the nature of its roots."]
+],
+Science:[
+["Chemical Reactions and Equations","1. Balance a chemical equation and identify the type of reaction.","2. Explain oxidation and reduction with suitable examples."],
+["Acids, Bases and Salts","1. Explain neutralisation with a balanced equation.","2. Explain the importance of pH in everyday life."],
+["Life Processes","1. Explain the process of nutrition in humans.","2. Differentiate between aerobic and anaerobic respiration."],
+["Light – Reflection and Refraction","1. State and use the mirror formula in a numerical.","2. Explain the laws of reflection and refraction."]
+],
+SST:[
+["Nationalism in India","1. Explain the main features and significance of the Civil Disobedience Movement.","2. Explain how symbols and cultural processes helped develop nationalism."],
+["The Making of a Global World","1. Explain the role of trade and migration in creating a global world.","2. Explain the impact of the Great Depression."],
+["Resources and Development","1. Explain resource planning and its importance.","2. Classify resources on different bases with examples."],
+["Power Sharing","1. Explain different forms of power sharing.","2. Explain why power sharing is desirable in a democracy."]
+],
+English:[
+["A Triumph of Surgery","1. Describe Tricki's condition and explain how he recovered.","2. What message does the story give about responsible pet care?"],
+["The Thief's Story","1. Explain how education and trust changed Hari Singh.","2. Describe Anil's role in Hari Singh's transformation."],
+["The Midnight Visitor","1. How did Ausable use presence of mind to defeat Max?","2. Explain how suspense is created in the story."],
+["A Tiger in the Zoo","1. Contrast the tiger's life in the cage with its natural life.","2. Explain the central idea and poetic contrast in the poem."]
+]
+};
+
+function renderBoard(){
+let g=document.getElementById('boardGrid');g.innerHTML='';
+Object.keys(boardQuestions).forEach(s=>{
+ let c=document.createElement('div');c.className='card searchableBoard';
+ c.dataset.text=s+' '+boardQuestions[s].map(x=>x[0]).join(' ');
+ c.innerHTML=`<div class="icon">${s==='Maths'?'➗':s==='Science'?'🔬':s==='SST'?'🌍':'📖'}</div><h3>${s}</h3><p>${boardQuestions[s].length} chapters • board-style practice</p>`;
+ c.onclick=()=>openBoardSubject(s);g.appendChild(c);
+});
+}
+function openBoardSubject(s){
+let g=document.getElementById('boardGrid');g.innerHTML=`<div style="grid-column:1/-1"><button class="btn" onclick="renderBoard()">← All Subjects</button><h2>${s} — Board Questions</h2></div>`;
+boardQuestions[s].forEach((n,i)=>{
+ let c=document.createElement('div');c.className='card';c.innerHTML=`<span class="tag">Chapter ${i+1}</span><h3>${n[0]}</h3><p><b>${n[1]}</b></p><p><b>${n[2]}</b></p>`;g.appendChild(c);
+});
+}
+function filterBoard(){
+let q=document.getElementById('boardSearch').value.toLowerCase();
+document.querySelectorAll('.searchableBoard').forEach(c=>c.style.display=c.dataset.text.toLowerCase().includes(q)?'block':'none');
+}
+
+function renderSubjects(){
+let g=document.getElementById('subjectGrid');g.innerHTML='';
+Object.keys(data).forEach(s=>{let c=document.createElement('div');c.className='card searchable';c.dataset.text=s+' '+data[s].map(x=>x[0]).join(' ');c.innerHTML=`<div class="icon">${s==='Maths'?'➗':s==='Science'?'🔬':s==='SST'?'🌍':'📖'}</div><h3>${s}</h3><p>${data[s].length} chapters available</p>`;c.onclick=()=>openSubject(s);g.appendChild(c)})}
+function openSubject(s){show('subjects');document.getElementById('search').value='';let g=document.getElementById('subjectGrid');g.innerHTML=`<div style="grid-column:1/-1"><button class="btn back" onclick="renderSubjects()">← All Subjects</button><h2>${s} — Chapters</h2></div>`;data[s].forEach((n,i)=>{let c=document.createElement('div');c.className='card';c.innerHTML=`<span class="tag">Chapter ${i+1}</span><h3>${n[0]}</h3><p>${n[1]}: ${n[2]}</p>`;c.onclick=()=>openNote(s,i);g.appendChild(c)})}
+function openNote(s,i){
+let n=data[s][i];show('notes');
+
+const generic = {
+Maths:[
+["Concept Builder","Start with the meaning of the chapter. Identify the quantities given in a question, write the required formula or theorem, and then solve step by step. Do not skip units or important algebraic steps. In board answers, a clear method is often easier to check than a single final answer."],
+["Step-by-Step Method","1. Read the question carefully. 2. Write the given information. 3. Identify the concept involved. 4. Write the formula/theorem. 5. Substitute values carefully. 6. Simplify. 7. Check the answer. This method is useful for numerical and proof-based questions."],
+["Common Mistakes","Students often lose marks by using the wrong sign, copying a value incorrectly, skipping a condition, or giving only the final answer. Keep rough work separate, check calculations, and verify the result whenever possible."],
+["Exam Strategy","For a 2–3 mark question, show the key steps. For a longer question, divide the solution into logical steps. Draw a graph or figure when the question requires it. Highlight the final answer clearly."]
+],
+Science:[
+["Concept Builder","Science answers become easier when you connect the definition with a real example. First understand the process, then learn its key terms, diagram or equation, and finally practise application-based questions."],
+["Step-by-Step Method","For a theory answer: define the concept, explain the process in sequence, and finish with an example or conclusion. For numericals: write the given values, formula, substitution and final answer with the correct unit."],
+["Common Mistakes","Do not change chemical formulae while balancing equations. In diagrams, label neatly. In physics numericals, watch sign conventions and units. In biology, use correct scientific terms instead of vague everyday wording."],
+["Exam Strategy","Use headings and bullet points for long answers. Learn important equations, definitions, diagrams and differences. Practise case-based questions because they test whether you can apply a concept rather than only recall it."]
+],
+SST:[
+["Concept Builder","Social Science becomes easier when you connect events, causes, effects and examples. Instead of memorising isolated lines, organise every topic as: what happened, why it happened, what changed and why it matters."],
+["Answer Framework","For a 3–5 mark answer, begin with a direct statement, add 3–5 explained points, and finish with a short conclusion when useful. Mention dates, places, examples and terms only when they are relevant."],
+["Common Mistakes","Avoid very short one-word answers when explanation is required. Do not mix events from different chapters. In geography, remember examples; in civics, use correct democratic terms; in economics, distinguish similar concepts carefully."],
+["Exam Strategy","Practise map work separately. Revise important terms and examples. For long answers, use numbered points with a small explanation under each point so the examiner can see every part of the answer."]
+],
+English:[
+["Concept Builder","For literature, understand the plot, characters, themes, message and important events. Do not simply memorise a summary. Your answer should connect the question to evidence from the chapter or poem."],
+["Answer Framework","Start with a direct answer. Then explain the reason or event and support it with a relevant detail from the text. For character questions, describe the quality and then show how the character's actions demonstrate it."],
+["Common Mistakes","Do not retell the whole story when the question asks one specific point. Keep tense and grammar consistent. In poetry, explain the idea and effect instead of only naming a poetic device."],
+["Exam Strategy","Practise short and long answers. Revise character traits, themes, important events and poetic ideas. Read the question twice and answer exactly what is asked."]
+]
+};
+
+let subjectExtra=generic[s]||generic.English;
+let examples,questions;
+if(s==='Maths'){
+ examples=["Find HCF of 135 and 225 using prime factorisation.","Solve x²−5x+6=0 by factorisation.","For 2x²−5x+3, verify the relationship between zeroes and coefficients.","Solve 2x+y=7 and x−y=2."];
+ questions=["Use Euclid's division algorithm to find the HCF of two integers.","Find the zeroes of a quadratic polynomial and verify the relationship.","Solve a pair of linear equations using elimination.","Solve a quadratic equation using the quadratic formula."];
+}else if(s==='Science'){
+ examples=["Balance Fe + H₂O → Fe₃O₄ + H₂.","Explain neutralisation with a balanced equation.","Explain photosynthesis with its word equation.","State the mirror formula and explain its terms."];
+ questions=["Explain oxidation and reduction with suitable examples.","Explain the importance of pH in everyday life.","Differentiate between aerobic and anaerobic respiration.","State and apply the laws of reflection."];
+}else if(s==='SST'){
+ examples=["Explain two causes and two effects of a major movement.","Explain how technology connected distant markets.","Classify resources on different bases with examples.","Explain two forms of power sharing."];
+ questions=["Explain the main features of the Civil Disobedience Movement.","Explain the impact of the Great Depression.","Why is resource planning important?","Why is power sharing desirable in a democracy?"];
+}else{
+ examples=["Explain why Tricki became ill and how he recovered.","Explain how trust changed Hari Singh.","Show how Ausable used presence of mind.","Contrast the tiger's life in the cage and in nature."];
+ questions=["What message does A Triumph of Surgery give?","How did Anil influence Hari Singh?","How did Ausable outsmart Max?","What is the central idea of A Tiger in the Zoo?"];
+}
+
+let pages=[
+["1. Chapter Overview",`${n[2]}<br><br><b>What you should learn:</b> the main concept, important terms, typical question patterns and how to apply the idea in an exam.`],
+["2. Core Concepts",`${n[3]}<br><br><b>Connect the ideas:</b> understand how the main concept leads to related ideas. Try explaining the topic aloud in simple words before memorising definitions.`],
+["3. Detailed Understanding",`${subjectExtra[0][1]}<br><br><b>Chapter focus:</b> ${n[0]} requires understanding, not just memorisation. Break the topic into smaller ideas and revise one idea at a time.`],
+["4. How to Answer",`${subjectExtra[1][1]}<br><br><b>Application:</b> when a new question appears, identify which part of the chapter it tests. Then use the relevant definition, rule, process, formula or example.`],
+["5. Mistakes & Exam Tips",`${subjectExtra[2][1]}<br><br>${subjectExtra[3][1]}<br><br><b>Quick Revision:</b> ${n[4]}`]
+];
+
+let notesHTML=pages.map((pg,idx)=>`<div class="note-page"><div class="page-label">ATT Notes • Page ${idx+1} of 5</div><h3>${pg[0]}</h3><p>${pg[1]}</p></div>`).join('');
+
+let practice1=`<div class="practice-page"><div class="page-label">ATT Practice • Examples</div><h3>🧩 Worked Practice / Examples</h3>${examples.map((e,j)=>`<div class="practice-q"><b>Example ${j+1}</b><p>${e}</p><p style="color:#9f92aa">Approach: identify the concept → write the relevant rule/formula → show the main steps → check the final result.</p></div>`).join('')}</div>`;
+let practice2=`<div class="practice-page"><div class="page-label">ATT Practice • Questions</div><h3>📝 Important Questions</h3>${questions.map((q,j)=>`<div class="practice-q"><b>Question ${j+1}</b><p>${q}</p><p style="color:#9f92aa">Write a complete board-style answer using the concepts from the notes.</p></div>`).join('')}<hr style="border-color:#35234a;margin:28px 0"><p style="text-align:center;color:#b968ff;font-weight:bold">Made by Aditya Thakur</p></div>`;
+
+document.getElementById('noteBox').innerHTML=`<button class="btn back" onclick="openSubject('${s}')">← Back to ${s}</button><h2>${n[0]}</h2>${notesHTML}<h2 style="margin:35px 0 18px">📝 Examples & Questions</h2>${practice1}${practice2}`;
+}
+
+function filterCards(){let q=document.getElementById('search').value.toLowerCase();document.querySelectorAll('.searchable').forEach(c=>c.style.display=c.dataset.text.toLowerCase().includes(q)?'block':'none')}
+
+function detailedText(subject, chapter){
+const base = {
+Maths:{
+"Real Numbers":[
+"Introduction: Real numbers are all numbers that can be represented on the number line. They include rational and irrational numbers.",
+"Rational numbers can be written as p/q, q≠0. Examples are 3/5, -7 and 0. Irrational numbers cannot be written in this form, such as √2 and √5.",
+"Euclid's Division Lemma: For positive integers a and b, a=bq+r, where 0≤r<b. It is useful in finding the HCF of two numbers.",
+"Example: For 135 and 225, repeated division gives the HCF. This method is systematic and avoids listing every factor.",
+"Fundamental Theorem of Arithmetic: Every composite number can be expressed as a product of primes, and this factorisation is unique apart from the order.",
+"Prime factorisation helps us find HCF by taking common prime factors with the smallest powers, and LCM by taking all prime factors with the greatest powers.",
+"Decimal expansion: A rational number has a terminating decimal when, after simplification, its denominator has only prime factors 2 and/or 5. Otherwise its decimal expansion is non-terminating recurring.",
+"Exam tip: Always simplify the fraction before deciding whether its decimal expansion terminates.",
+"Quick revision: HCF uses minimum powers of common primes; LCM uses maximum powers of all primes; HCF×LCM equals the product of two positive integers."
+],
+"Polynomials":[
+"Introduction: A polynomial is an algebraic expression made from constants and variables with non-negative integer powers.",
+"Degree is the highest power of the variable. A constant has degree 0, a linear polynomial degree 1 and a quadratic polynomial degree 2.",
+"A zero of a polynomial is a value of x for which p(x)=0. Graphically, the zeroes are the x-coordinates where the graph meets the x-axis.",
+"For a quadratic polynomial ax²+bx+c, the sum of zeroes is -b/a and the product is c/a.",
+"For a cubic polynomial ax³+bx²+cx+d, the sum of zeroes is -b/a, the sum of pairwise products is c/a and the product of zeroes is -d/a.",
+"Example: x²-5x+6=(x-2)(x-3), so its zeroes are 2 and 3.",
+"Factorisation, division algorithm and the relationship between coefficients and zeroes are central exam skills.",
+"Exam tip: Substitute the proposed zero into the polynomial to check it quickly.",
+"Quick revision: zero means p(x)=0; degree is the highest exponent; coefficient relationships help reconstruct a polynomial."
+],
+"Pair of Linear Equations":[
+"Introduction: A pair of linear equations contains two equations in two variables. Their common solution satisfies both equations.",
+"Graphically, each equation represents a straight line. Two intersecting lines have one solution, parallel lines have no solution, and coincident lines have infinitely many solutions.",
+"For a1x+b1y+c1=0 and a2x+b2y+c2=0: if a1/a2 is not equal to b1/b2, there is one solution.",
+"If a1/a2=b1/b2 is not equal to c1/c2, there is no solution. If all three ratios are equal, there are infinitely many solutions.",
+"Substitution method: express one variable from one equation and substitute it into the other.",
+"Elimination method: multiply equations when necessary and add or subtract them to eliminate one variable.",
+"Cross-multiplication can also be used when the equations are written in standard form.",
+"Word problems often translate statements about ages, numbers, prices, distances or mixtures into two linear equations.",
+"Exam tip: after finding x and y, substitute them into both original equations to verify."
+],
+"Quadratic Equations":[
+"Introduction: A quadratic equation is ax²+bx+c=0, where a≠0. Its graph is a parabola.",
+"Quadratic equations can be solved by factorisation, completing the square or the quadratic formula.",
+"Quadratic formula: x=(-b±√(b²-4ac))/(2a). Always identify a, b and c correctly before substituting.",
+"The discriminant D=b²-4ac determines the nature of roots. D>0 gives two distinct real roots; D=0 gives equal real roots; D<0 gives no real roots.",
+"Example: x²-5x+6=0 becomes (x-2)(x-3)=0, giving x=2 or x=3.",
+"Relationships: sum of roots = -b/a and product of roots = c/a.",
+"Word problems may require forming a quadratic equation from a statement before solving it.",
+"Exam tip: Keep the ± sign in the formula and simplify the square root carefully.",
+"Quick revision: identify a,b,c → calculate D if needed → choose a suitable method → verify roots."
+]
+},
+Science:{
+"Chemical Reactions and Equations":[
+"Introduction: A chemical reaction changes reactants into products with new properties.",
+"Common signs include change in colour, change in temperature, formation of gas and formation of a precipitate.",
+"Chemical equations use symbols and formulae to represent reactions. They must be balanced because atoms are conserved.",
+"Types include combination, decomposition, displacement, double displacement and redox reactions.",
+"Combination: two or more substances form one product. Decomposition: one compound breaks into simpler substances.",
+"Displacement occurs when a more reactive element replaces a less reactive element. Double displacement involves exchange of ions between compounds.",
+"Oxidation can involve addition of oxygen or removal of hydrogen/electrons; reduction is the reverse in common school-level examples.",
+"Corrosion is gradual damage of metals by environmental reactions. Rancidity is oxidation of fats and oils.",
+"Exam tip: balance equations by changing coefficients, never by changing chemical formulae."
+],
+"Acids, Bases and Salts":[
+"Introduction: Acids and bases show characteristic properties in aqueous solutions.",
+"Acids generally furnish H+ ions in water and bases furnish OH− ions. Indicators help identify acidic or basic solutions.",
+"The pH scale measures acidity/basicity. At school level, pH 7 is neutral, below 7 acidic and above 7 basic.",
+"Neutralisation is an acid-base reaction producing salt and water. Example: HCl+NaOH→NaCl+H2O.",
+"Acids react with many metals to produce salt and hydrogen, and with carbonates to produce salt, water and carbon dioxide.",
+"Salts have many uses. Common examples include baking soda, washing soda and bleaching powder.",
+"Strong acids/bases ionise more extensively than weak ones. Concentration and strength are related but not identical ideas.",
+"Everyday examples: stomach acid helps digestion, antacids reduce excess acidity, and baking soda has household uses.",
+"Exam tip: learn key reactions and the uses/preparation of common salts."
+],
+"Life Processes":[
+"Introduction: Life processes are activities necessary for maintenance of living organisms: nutrition, respiration, transport and excretion.",
+"Nutrition provides materials and energy. Plants are autotrophic and prepare food by photosynthesis using sunlight, carbon dioxide and water.",
+"Human digestion breaks complex food into simpler substances that can be absorbed and used by cells.",
+"Respiration releases energy from food. Aerobic respiration uses oxygen; anaerobic respiration occurs without oxygen.",
+"Transportation in humans involves the heart, blood and blood vessels. Plants transport water/minerals through xylem and food through phloem.",
+"Excretion removes metabolic wastes. Human kidneys filter blood and help form urine.",
+"Photosynthesis and respiration are related but not identical: photosynthesis stores energy in glucose, while respiration releases usable energy.",
+"Exam tip: draw and label diagrams such as the human digestive system, heart, nephron and stomata when required.",
+"Quick revision: nutrition gets food, respiration releases energy, transport moves materials, excretion removes wastes."
+],
+"Light – Reflection and Refraction":[
+"Introduction: Light travels in straight lines in a uniform medium. Reflection is bouncing back of light; refraction is bending due to change of medium.",
+"Laws of reflection: angle of incidence equals angle of reflection, and incident ray, reflected ray and normal lie in the same plane.",
+"Concave mirrors can form different types of images depending on object position; convex mirrors generally form virtual, erect and diminished images.",
+"Mirror formula: 1/f=1/v+1/u. Magnification m=-v/u. Sign convention must be followed carefully.",
+"Refraction occurs because the speed of light changes when it enters another medium. Refractive index relates the speed of light in vacuum to its speed in the medium.",
+"Convex lenses can converge light; concave lenses generally diverge light. Lens formula: 1/f=1/v-1/u.",
+"Magnification for a lens is m=v/u. The power of a lens is P=1/f when f is measured in metres.",
+"Applications include spectacles, cameras, microscopes and optical instruments.",
+"Exam tip: make a neat ray diagram and write the sign convention before numerical calculations."
+]
+},
+SST:{
+"Nationalism in India":[
+"Introduction: Indian nationalism grew during the anti-colonial struggle. Different communities and groups participated while pursuing their own concerns.",
+"Gandhi's idea of satyagraha emphasised truth, non-violence and peaceful resistance. Local struggles helped build wider political mobilisation.",
+"The Rowlatt Act and the Jallianwala Bagh incident intensified opposition to colonial rule. The Non-Cooperation Movement encouraged people to withdraw cooperation from colonial institutions.",
+"Different groups joined the movement for different reasons. Students, teachers, traders, peasants and workers could experience colonial policies differently.",
+"The Civil Disobedience Movement began with the Salt March and challenged colonial laws. It attracted broad participation but also faced limitations.",
+"National identity was expressed through symbols, folklore, reinterpretation of history and images such as Bharat Mata.",
+"Not every group experienced nationalism in exactly the same way. Understanding these differences is important for a balanced answer.",
+"Exam tip: connect major events with dates, causes, participants and outcomes rather than memorising isolated names.",
+"Quick revision: satyagraha → Non-Cooperation → Civil Disobedience → development of collective belonging."
+],
+"The Making of a Global World":[
+"Introduction: Global connections developed over centuries through trade, migration, technology and movement of capital.",
+"Pre-modern trade routes connected regions and carried goods, people, ideas and diseases. Food crops also travelled across continents.",
+"The nineteenth century saw increased flows of labour, goods and capital. Industrialisation created demand for raw materials and markets.",
+"Indentured labour moved workers to plantations and other regions under difficult contractual systems.",
+"The First World War changed global economic relationships. The Great Depression caused unemployment, falling prices and reduced trade.",
+"After the Second World War, new international institutions and changing economic policies shaped the post-war world economy.",
+"Globalisation has both opportunities and unequal effects. Different regions and social groups have experienced global economic change differently.",
+"Exam tip: organise answers chronologically and mention how technology and economic policies affected global connections.",
+"Quick revision: trade and migration → industrialisation → wars and depression → post-war reconstruction → modern global links."
+],
+"Resources and Development":[
+"Introduction: A resource becomes useful when it has utility, value and appropriate technology for use.",
+"Resources can be classified by origin, exhaustibility, ownership and status of development.",
+"Resource planning involves identification and inventory, planning structures and matching development plans with resource availability.",
+"Land is an important natural resource. Land use depends on physical factors and human activities.",
+"Soil is a renewable resource but can be degraded by erosion, deforestation, overgrazing and inappropriate farming.",
+"Soil conservation methods include contour ploughing, terrace farming, strip cropping, shelter belts and planting vegetation.",
+"Sustainable development means using resources carefully so that present needs are met without damaging future possibilities.",
+"Exam tip: learn classifications and pair each soil conservation method with its purpose.",
+"Quick revision: classification → planning → land resources → soil types/problems → conservation → sustainable use."
+],
+"Power Sharing":[
+"Introduction: Power sharing means distributing power among different organs, levels, groups and political actors.",
+"Horizontal power sharing occurs among legislature, executive and judiciary. Each organ checks the others.",
+"Vertical power sharing occurs among different levels of government, such as central, state and local governments.",
+"Power may also be shared among social groups and through political parties, pressure groups and movements.",
+"Prudential reasons: sharing power can reduce conflict and instability. Moral reasons: it is the spirit of democracy that people affected by decisions should have a voice.",
+"Belgium and Sri Lanka provide contrasting examples of approaches to accommodation and majoritarianism in the chapter.",
+"Power sharing does not mean every group gets exactly equal power in every situation; the arrangement depends on the constitutional and political system.",
+"Exam tip: remember the four major forms and explain both prudential and moral reasons.",
+"Quick revision: horizontal + vertical + social groups + political parties/pressure groups."
+]
+},
+English:{
+"A Triumph of Surgery":[
+"Introduction: The story uses humour to show how excessive pampering can be harmful to a pet.",
+"Tricki becomes ill because Mrs Pumphrey gives him rich food and little exercise. She believes more food means more care.",
+"Dr Herriot takes Tricki to the surgery. There he does not use complicated medicine; instead he changes Tricki's routine.",
+"Tricki gets controlled food, exercise and interaction with other dogs. His condition improves naturally.",
+"Mrs Pumphrey's love is sincere, but her overindulgence is not healthy. The story separates genuine care from excessive pampering.",
+"Humour comes from Tricki's transformation and Mrs Pumphrey's dramatic concern.",
+"Character point: Dr Herriot is practical and observant, while Mrs Pumphrey is loving but overprotective.",
+"Exam tip: answers should connect events to the central idea rather than retelling the whole story.",
+"Quick revision: overfeeding → illness → changed routine → recovery → lesson about balanced care."
+],
+"The Thief's Story":[
+"Introduction: The story focuses on Hari Singh, a young thief, and Anil, a trusting writer.",
+"Hari joins Anil by offering to cook, although he cannot cook well. Anil nevertheless keeps him and begins teaching him.",
+"Hari steals money after seeing an opportunity. While leaving, he thinks about the value of education and Anil's trust.",
+"He returns because he realises that stealing the money would cost him the chance to learn and build a better life.",
+"Anil's trust is important because he does not use force or harsh punishment. His kindness creates a chance for Hari to change.",
+"The story explores honesty, education, trust and transformation.",
+"Character point: Hari is clever and dishonest at first but capable of reflection; Anil is generous and trusting.",
+"Exam tip: explain why Hari changes, not just what he does.",
+"Quick revision: meeting → trust → theft → reflection → return → possibility of reform."
+],
+"The Midnight Visitor":[
+"Introduction: The story challenges the idea that a secret agent must look physically heroic.",
+"Ausable appears ordinary but is intelligent and calm. Max enters with a gun and expects Ausable to be frightened.",
+"Ausable invents a story about a balcony outside the window. He makes the story believable by acting naturally.",
+"When a waiter arrives, Ausable says it is the police coming to check the room. Max becomes frightened.",
+"Max tries to escape through the supposed balcony and falls into the trap created by Ausable's invented story.",
+"The story shows that presence of mind, confidence and intelligence can be more useful than physical appearance.",
+"Character point: Ausable stays calm under pressure; Max is confident but becomes a victim of his own assumptions.",
+"Exam tip: mention the balcony trick and the role of the waiter when explaining the ending.",
+"Quick revision: threat → false balcony story → waiter → Max panics → Ausable succeeds."
+],
+"A Tiger in the Zoo":[
+"Introduction: The poem contrasts a tiger's natural freedom with its restricted life in a cage.",
+"In the jungle, the tiger would move through grass, hunt prey and live according to its instincts. The poem presents this natural setting vividly.",
+"In the cage, the tiger walks within a limited space. The repeated contrast makes the loss of freedom clear.",
+"The tiger's anger and frustration are shown indirectly through its behaviour and the poet's imagery.",
+"The poem raises a wider question about keeping wild animals in captivity.",
+"Important contrast: natural environment versus cage; freedom versus confinement; instinctive life versus restricted existence.",
+"Exam tip: when explaining poetic devices, connect the device to the meaning rather than listing names only.",
+"Quick revision: jungle life → cage life → contrast → loss of freedom → message about captivity."
+]
+}
+};
+return base[subject]?.[chapter]||[];
+}
+
+const questions=[
+["Which formula is used for the roots of ax²+bx+c=0?","x=(-b±√(b²-4ac))/(2a)",["x=(-b±√(b²-4ac))/(2a)","x=(-b±√(b²+4ac))/2","x=(b±√(b²-4ac))/(2a)"]],
+["What is the pH of a neutral solution?","7",["0","7","14"]],
+["Which process is the bouncing back of light?","Reflection",["Refraction","Reflection","Dispersion"]],
+["Which movement was launched in 1920?","Non-Cooperation Movement",["Quit India Movement","Non-Cooperation Movement","Swadeshi Movement"]],
+["What helped Hari Singh change in The Thief's Story?","Anil's trust and education",["Money","Anil's trust and education","Fear of police"]]
+];
+
+const STORE='attStudyV3';
+let appState=JSON.parse(localStorage.getItem(STORE)||'{"completed":{},"favorites":[],"quizBest":0,"quizAttempts":0,"theme":"dark"}');
+function saveState(){localStorage.setItem(STORE,JSON.stringify(appState));updateHomeStats()}
+function toast(msg){let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t)}t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+function toggleTheme(){appState.theme=appState.theme==='light'?'dark':'light';document.body.classList.toggle('light',appState.theme==='light');saveState()}
+function markCompleted(s,i){let key=s+'::'+i;appState.completed[key]=true;saveState();toast('Chapter marked complete ✓')}
+function isCompleted(s,i){return !!appState.completed[s+'::'+i]}
+function toggleFavorite(s,i){let key=s+'::'+i;let a=appState.favorites;let ix=a.indexOf(key);if(ix>=0){a.splice(ix,1);toast('Removed from saved')}else{a.push(key);toast('Saved to favorites ⭐')}saveState();openNote(s,i)}
+function showFavorites(){
+ show('subjects');let g=document.getElementById('subjectGrid');
+ g.innerHTML='<div style="grid-column:1/-1"><button class="btn back" onclick="renderSubjects()">← All Subjects</button><h2>⭐ Saved Chapters</h2></div>';
+ let found=false;
+ Object.keys(data).forEach(s=>data[s].forEach((n,i)=>{if(appState.favorites.includes(s+'::'+i)){found=true;let c=document.createElement('div');c.className='card';c.innerHTML=`<span class="tag">${s} • Chapter ${i+1}</span><h3>${n[0]}</h3><p>${n[2]}</p>`;c.onclick=()=>openNote(s,i);g.appendChild(c)}}));
+ if(!found)g.innerHTML+='<div class="empty" style="grid-column:1/-1">No saved chapters yet. Open a chapter and tap ⭐.</div>';
+}
+function updateHomeStats(){
+ let total=Object.values(data).reduce((a,x)=>a+x.length,0),done=Object.keys(appState.completed).length;
+ let box=document.getElementById('homeStats');if(!box)return;
+ box.innerHTML=`<div class="stat"><strong>${done}/${total}</strong><small>Chapters completed</small><div class="progress"><i style="width:${total?done/total*100:0}%"></i></div></div>
+ <div class="stat"><strong>${appState.quizBest}</strong><small>Best quiz score</small></div>
+ <div class="stat"><strong>${appState.quizAttempts}</strong><small>Quiz attempts</small></div>
+ <div class="stat"><strong>${appState.favorites.length}</strong><small>Saved chapters</small></div>`;
+}
+function renderProgress(){
+ show('progress');let total=Object.values(data).reduce((a,x)=>a+x.length,0),done=Object.keys(appState.completed).length;
+ document.getElementById('progressStats').innerHTML=`<div class="stat"><strong>${done}/${total}</strong><small>Overall completion</small><div class="progress"><i style="width:${total?done/total*100:0}%"></i></div></div>
+ <div class="stat"><strong>${appState.quizBest}/${questions.length}</strong><small>Best quiz score</small></div>
+ <div class="stat"><strong>${appState.quizAttempts}</strong><small>Attempts</small></div>`;
+ let list=document.getElementById('progressList');list.innerHTML='';
+ Object.keys(data).forEach(s=>{let d=data[s].filter((_,i)=>isCompleted(s,i)).length;let row=document.createElement('div');row.style.margin='14px 0';row.innerHTML=`<div style="display:flex;justify-content:space-between"><b>${s}</b><span class="tag">${d}/${data[s].length}</span></div><div class="progress"><i style="width:${data[s].length?d/data[s].length*100:0}%"></i></div>`;list.appendChild(row)});
+}
+function resetProgress(){if(confirm('Reset saved progress, favorites and quiz history?')){appState={completed:{},favorites:[],quizBest:0,quizAttempts:0,theme:appState.theme};saveState();renderProgress();toast('Progress reset')}}
+let qi=0,score=0,quizSet=[];
+function startQuiz(){qi=0;score=0;quizSet=[...questions].sort(()=>Math.random()-.5);appState.quizAttempts++;saveState();drawQ()}
+function drawQ(){let q=quizSet[qi];document.getElementById('quizBox').innerHTML=`<div class="card"><span class="tag">Question ${qi+1} of ${quizSet.length}</span><div class="progress"><i style="width:${qi/quizSet.length*100}%"></i></div><h3>${q[0]}</h3>${q[2].map((o,i)=>`<button class="option" onclick="answer(${i})">${o}</button>`).join('')}</div>`}
+function answer(i){
+ if(quizSet[qi][2][i]===quizSet[qi][1]){score++;toast('Correct! ✓')}else toast('Keep going!');
+ qi++;
+ if(qi<quizSet.length)drawQ();
+ else{if(score>appState.quizBest)appState.quizBest=score;saveState();document.getElementById('quizBox').innerHTML=`<div class="result"><h2>🎉 Quiz Complete!</h2><p>Your score: <b>${score}/${quizSet.length}</b></p><div class="progress"><i style="width:${score/quizSet.length*100}%"></i></div><p>${score===quizSet.length?'Perfect score! 🔥':score>=3?'Great work! Keep practising.':'Good attempt — try again and improve.'}</p></div>`}
+}
+
+function escHTML(x){
+ return String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function makeBullets(lines){
+ return '<ul>'+lines.map(x=>'<li>'+escHTML(x)+'</li>').join('')+'</ul>';
+}
+function chapterSpecificExtras(subject, chapter){
+ const extras={
+  Maths:{
+   "Real Numbers":{
+    meaning:["Real numbers are the complete collection of numbers that can be located on the number line. This includes integers, fractions, terminating decimals, recurring decimals and irrational numbers such as √2.","The important idea in this chapter is that different-looking numbers can still be classified precisely. In exam questions, first identify whether a number is rational or irrational and then apply the correct theorem or factorisation method."],
+    examples:["HCF of 135 and 225: 225=135×1+90, 135=90×1+45, 90=45×2+0, so HCF=45.","For 6/15, first reduce to 2/5. Since the denominator contains only the prime factor 5, the decimal expansion terminates.","For 7/12, the denominator 12=2²×3 contains a prime factor other than 2 and 5, so the decimal expansion is non-terminating recurring."],
+    focus:["Euclid's division lemma and algorithm","Fundamental Theorem of Arithmetic","HCF and LCM through prime factorisation","Terminating versus non-terminating recurring decimals"]},
+   "Polynomials":{
+    meaning:["A polynomial is an algebraic expression in which the powers of the variable are whole numbers. The chapter connects algebraic expressions, their zeroes, graphs and coefficients.","A zero is not simply a number written in an answer—it is a value that makes the polynomial equal to zero. For a graph, it is the x-coordinate where the graph cuts or touches the x-axis."],
+    examples:["For p(x)=x²−5x+6, factorise as (x−2)(x−3). Therefore the zeroes are 2 and 3.","For ax²+bx+c, if zeroes are α and β, then α+β=−b/a and αβ=c/a. These relationships let you check an answer quickly."],
+    focus:["Degree and types of polynomials","Zeroes and their graphical meaning","Relationship between zeroes and coefficients","Division algorithm and factorisation"]},
+   "Pair of Linear Equations":{
+    meaning:["A pair of linear equations describes two conditions involving the same two variables. Their common solution is the point that satisfies both conditions simultaneously.","The graphical picture is extremely useful: intersecting lines give one solution, parallel lines give no solution, and coincident lines represent infinitely many solutions."],
+    examples:["2x+y=7 and x−y=2. Adding gives 3x=9, so x=3 and y=1. Substitution in both equations verifies the solution.","For word problems, define the variables first. If x is the price of one notebook and y the price of one pen, translate each sentence into an equation before solving."],
+    focus:["Graphical interpretation","Consistency conditions","Substitution and elimination","Word problems"]},
+   "Quadratic Equations":{
+    meaning:["A quadratic equation has the highest power of the variable equal to 2. Its solutions are called roots, and the number/type of real roots can be predicted using the discriminant.","Choosing a method matters. Factorisation is usually quickest when factors are simple; the quadratic formula works for any quadratic equation with a≠0."],
+    examples:["x²−5x+6=0 → (x−2)(x−3)=0 → x=2 or 3.","For 2x²−4x+2=0, D=(−4)²−4(2)(2)=0, so the equation has equal real roots."],
+    focus:["Standard form ax²+bx+c=0","Factorisation and completing the square","Quadratic formula","Discriminant and nature of roots","Sum and product of roots"]}
+  },
+  Science:{
+   "Chemical Reactions and Equations":{
+    meaning:["A chemical reaction forms one or more new substances. The important skill is to recognise evidence of reaction and represent it using a balanced chemical equation.","Balancing does not change the substances; it changes only the coefficients so that the number of atoms of every element is the same on both sides."],
+    examples:["2Mg + O₂ → 2MgO is a combination reaction and also involves oxidation of magnesium.","CaCO₃ → CaO + CO₂ is a decomposition reaction. The reactant breaks into simpler products."],
+    focus:["Balancing equations","Combination, decomposition, displacement and double displacement","Oxidation and reduction","Corrosion and rancidity"]},
+   "Acids Bases and Salts":{
+    meaning:["Acids and bases show characteristic behaviour in water. Indicators and the pH scale help us identify how acidic or basic a solution is.","The chapter also explains how common salts are prepared and why substances such as baking soda, washing soda and bleaching powder are useful in everyday life."],
+    examples:["HCl + NaOH → NaCl + H₂O is a neutralisation reaction.","Acids react with many metal carbonates to form salt, water and carbon dioxide. The gas produced can be tested with limewater."],
+    focus:["Indicators and pH","Reactions of acids and bases","Neutralisation","Common salts and their uses"]},
+   "Life Processes":{
+    meaning:["Life processes are the basic activities needed to maintain an organism. The chapter connects nutrition, respiration, transportation and excretion as systems that keep cells supplied and remove wastes.","For humans, understand the pathway of food, air, blood and urine. For plants, focus on photosynthesis, stomata and transport through xylem and phloem."],
+    examples:["Photosynthesis: carbon dioxide + water —(sunlight/chlorophyll)→ glucose + oxygen.","Aerobic respiration releases more energy than anaerobic respiration because glucose is broken down more completely."],
+    focus:["Nutrition and photosynthesis","Human digestion","Aerobic and anaerobic respiration","Heart and blood circulation","Plant transport","Kidneys and excretion"]},
+   "Light – Reflection and Refraction":{
+    meaning:["Reflection is the return of light from a surface, while refraction is the change in direction of light when it passes between media because its speed changes.","The chapter is strongly application-based: learn the sign convention, ray diagrams and formulae together rather than memorising them separately."],
+    examples:["Mirror formula: 1/f=1/v+1/u. Magnification for a mirror: m=−v/u.","Lens formula: 1/f=1/v−1/u. Lens power P=1/f when focal length is in metres."],
+    focus:["Laws of reflection","Ray diagrams for mirrors and lenses","Mirror and lens formulae","Magnification","Refractive index and power of lens"]}
+  },
+  SST:{
+   "Nationalism in India":{
+    meaning:["Indian nationalism developed through a long anti-colonial struggle in which different regions and social groups participated. Their reasons for joining were not always identical.","The chapter is best understood as a sequence: wartime conditions and local struggles → mass movements → changing forms of participation → symbols and ideas that helped create a sense of collective identity."],
+    examples:["The Rowlatt Act and Jallianwala Bagh became major turning points in anti-colonial politics.","The Salt March made the Civil Disobedience Movement visible through a simple issue that challenged colonial authority."],
+    focus:["Satyagraha","Rowlatt Act and Jallianwala Bagh","Non-Cooperation Movement","Civil Disobedience Movement","Different social groups","Symbols of nationalism"]},
+   "The Making of a Global World":{
+    meaning:["Globalisation did not begin with the internet. Long-distance trade, migration, technology and the movement of capital connected societies over centuries.","The chapter then follows major changes in the nineteenth and twentieth centuries, including industrialisation, indentured labour, the World Wars and the Great Depression."],
+    examples:["Food crops moved across continents and changed diets and livelihoods.","The Great Depression reduced demand, prices and employment and affected farmers and workers across the world."],
+    focus:["Pre-modern trade","Nineteenth-century flows","Indentured labour","First World War","Great Depression","Post-war economic order"]},
+   "Resources and Development":{
+    meaning:["A resource is not simply something found in nature; it becomes a resource when it has utility, value and the technology needed to use it. Resources therefore depend on human knowledge and choices.","The chapter links classification and planning with land and soil conservation, ending with the idea that resources must be used sustainably."],
+    examples:["Contour ploughing slows water flow on slopes. Terrace farming creates step-like fields and reduces soil erosion.","Shelter belts of trees reduce wind speed and help protect soil in dry regions."],
+    focus:["Classification of resources","Resource planning","Land use","Soil types and degradation","Soil conservation","Sustainable development"]},
+   "Power Sharing":{
+    meaning:["Power sharing means that political power is not concentrated in one person, organ, level or social group. Different institutions and groups participate in decision-making.","The chapter uses Belgium and Sri Lanka to show why accommodation, representation and constitutional arrangements can matter for social harmony and democratic stability."],
+    examples:["Horizontal sharing: legislature, executive and judiciary exercise different powers and check one another.","Vertical sharing: central, state and local governments have constitutionally defined responsibilities."],
+    focus:["Horizontal power sharing","Vertical power sharing","Social groups","Political parties and pressure groups","Prudential and moral reasons","Belgium and Sri Lanka"]}
+  },
+  English:{
+   "A Triumph of Surgery":{
+    meaning:["The story is humorous but its central idea is serious: care becomes harmful when it ignores balance and healthy habits. Tricki's problem is linked to overfeeding and lack of exercise.","Dr Herriot's solution is practical rather than dramatic. A controlled routine, suitable food and activity allow Tricki to recover."],
+    examples:["Mrs Pumphrey genuinely loves Tricki, but she interprets every request for food as a need to feed him more.","At the surgery, Tricki improves through routine and exercise, showing that discipline can be a form of care."],
+    focus:["Tricki's condition","Mrs Pumphrey's character","Dr Herriot's practical approach","Humour","Overindulgence versus genuine care"]},
+   "The Thief's Story":{
+    meaning:["Hari Singh is a young thief who understands people well but lacks stability and education. Anil's trust gives him a chance to choose a different life.","The turning point is not fear of punishment. Hari begins to value the opportunity to learn and the trust placed in him, which makes him return the money."],
+    examples:["Hari first approaches Anil because he sees him as an easy person to rob, but their relationship changes his thinking.","The story shows that education and trust can create a path away from dishonest behaviour."],
+    focus:["Hari Singh's transformation","Anil's trust","Education","Honesty","Internal conflict"]},
+   "The Midnight Visitor":{
+    meaning:["The story overturns the stereotype that a secret agent must look physically impressive. Ausable succeeds through calm thinking, believable speech and knowledge of how people react under pressure.","The false balcony is a psychological trap. Max does not verify the story; he accepts it because Ausable sounds confident and the situation feels urgent."],
+    examples:["Ausable invents the story of a balcony outside the window and then uses the arrival of the waiter to make the story appear believable.","Max's decision to escape without checking the facts shows how assumptions can be used against someone."],
+    focus:["Ausable's presence of mind","Max's overconfidence","The balcony trick","Suspense and surprise","Appearance versus ability"]},
+   "A Tiger in the Zoo":{
+    meaning:["The poem creates a contrast between the tiger's natural life and its restricted existence in a cage. The repeated movement between these settings makes the loss of freedom central to the poem.","The tiger is powerful by nature, yet the cage prevents it from behaving according to its instincts. This contrast creates sympathy and a criticism of unnecessary captivity."],
+    examples:["The jungle imagery suggests movement, hunting and freedom, while the cage imagery suggests limited space, silent anger and helplessness.","The tiger's behaviour is described through imagery and contrast rather than a long direct explanation."],
+    focus:["Freedom versus captivity","Jungle and cage contrast","Imagery","Mood and tone","Message about wild animals"]}
+  }
+ };
+ return extras[subject]?.[chapter]||null;
+}
+
+function makeFullNotes(subject, chapter, index){
+ const raw=detailedText(subject, chapter)||[];
+ const n=data[subject][index];
+ const title=n[0];
+ const ex=chapterSpecificExtras(subject,title)||{};
+ const safe=x=>escHTML(String(x??''));
+ const list=a=>'<ul>'+a.map(x=>'<li>'+safe(x)+'</li>').join('')+'</ul>';
+ const examples=ex.examples||[];
+ const focus=ex.focus||[];
+ const explain=[
+  'Read the statement first, then identify the key term, condition and result. Do not memorise it as an isolated sentence; connect it to the next idea in the chapter.',
+  'Ask yourself: What is happening here? Why does it happen? What would change if the condition changed? Answering these questions makes the concept easier to recall.',
+  'For an exam answer, use the exact concept asked in the question, explain it in your own words, and add a relevant example, equation, event, evidence or application when appropriate.'
+ ];
+ const topicNames=focus.length?focus:raw.map((_,i)=>`Chapter Concept ${i+1}`);
+ const pointPages=raw.map((x,i)=>({title:`${i+1}. ${safe(topicNames[i%topicNames.length])}`,html:`
+   <div class="topic-heading">📘 ${safe(topicNames[i%topicNames.length])}</div><div class="concept-card"><div class="concept-label">EXPLAINED NOTES</div><p class="big-explain">${safe(x)}</p></div>
+   <h4>🔎 Step-by-step understanding</h4>
+   <p>${explain[0]}</p><p>${explain[1]}</p>
+   <div class="keybox"><b>Why this matters:</b> ${subject==='Maths'?'This point may be needed to choose a method, justify a step, or verify an answer.':subject==='Science'?'This point connects a scientific definition or process with an observation, equation, diagram or real-life application.':subject==='SST'?'This point should be linked with its time, place, people, cause and consequence wherever relevant.':'This point should be connected with the text, character, theme, event, imagery or message instead of being memorised as a separate line.'}</div>
+   ${examples.length?`<h4>💡 Related example / application</h4><p>${safe(examples[i%examples.length])}</p>`:''}
+   <div class="exambox"><b>Exam approach:</b> ${safe(explain[2])}</div>
+   <h4>🧠 Active recall</h4><p>Close this page and explain this topic aloud in 2–3 sentences. Then write one keyword, formula, example or piece of evidence that proves you understood it.</p>`}));
+ const formulaItems=raw.filter(x=>/[=]|formula|equation|ratio|pH|degree|root|HCF|LCM|power|magnification|velocity|speed|satyagraha|movement|resource|power sharing|trust|imagery|cage|balcony/i.test(x));
+ const pages=[
+  {title:'1. Chapter Overview',html:`<div class="notes-brand"><span class="att-mark">A</span><b>AT STUDY • DEEP NOTES</b></div><p>${safe(ex.meaning?.[0]||n[2])}</p><div class="keybox"><b>Chapter goal:</b> ${safe(ex.meaning?.[1]||n[3])}</div><h4>What this chapter contains</h4>${list(focus.length?focus:raw.slice(0,7))}<h4>How to study this chapter</h4><p>First understand the chapter map, then study each topic page in order. After every 2–3 topics, stop and explain them without looking. Finish with the formula/terms sheet and practice questions.</p>`},
+  {title:'2. Chapter Map — Connect the Topics',html:`${list(focus.length?focus:raw)}<div class="exambox"><b>Connection rule:</b> A good chapter answer is not a collection of memorised lines. Show how one idea leads to, explains, proves or affects another idea.</div>`},
+  ...pointPages,
+  {title:`${pointPages.length+3}. Worked Examples & Applications`,html:`${examples.length?examples.map((e,i)=>`<div class="practice-q"><b>Example ${i+1}</b><p>${safe(e)}</p><p><b>How to learn from it:</b> identify the concept being used, follow the key step, and check whether the conclusion matches the question.</p></div>`).join(''):'<p>Use the worked examples inside the topic pages and create one fresh example yourself.</p>'}`},
+  {title:`${pointPages.length+4}. Formulae / Rules / Important Terms`,html:`<h4>Must-remember content</h4>${list(formulaItems.length?formulaItems:raw.slice(0,8))}<div class="formulabox"><b>Memory method:</b> Write each formula/rule/term once without looking, check it, and then solve or explain one question using it.</div>`},
+  {title:`${pointPages.length+5}. Exam Answer Writing`,html:`<h4>1–2 marks</h4><p>Answer directly. Give the definition, fact, formula, reason or identification asked.</p><h4>3 marks</h4><p>Use 3 clear explained points or the required steps. Add a relevant example/evidence where useful.</p><h4>5 marks / long answer</h4><p>Start with the exact answer, develop it in logical points, and support each point with a relevant detail. Avoid unrelated information.</p><h4>Numericals</h4><p><b>Given → Required → Formula → Substitution → Calculation → Unit / final statement.</b> Check signs and units before finishing.</p><h4>Literature</h4><p><b>Point → textual detail from the supplied chapter/poem → explanation.</b> Do not only retell the plot.</p>`},
+  {title:`${pointPages.length+6}. Common Mistakes & Fixes`,html:`${list(subject==='Maths'?["Using a formula without checking its conditions","Sign mistakes and skipped algebraic steps","Not verifying the final answer"]:subject==='Science'?["Writing an unbalanced equation","Confusing definitions or reaction types","Missing labels, units or sign convention in diagrams/numericals"]:subject==='SST'?["Mixing dates/events or giving the wrong example","Listing keywords without explaining them","Ignoring the question's time, place or context"]:["Retelling instead of answering the exact question","Giving a character/theme claim without explaining it","Naming a literary feature without explaining its effect"])}<div class="keybox"><b>Fix:</b> After every practice answer, underline the exact keyword that earns the mark and check whether you actually explained it.</div>`},
+  {title:`${pointPages.length+7}. One-Page Quick Revision`,html:`<h4>Chapter essentials</h4>${list((focus.length?focus:raw).slice(0,10))}<h4>60-second recall</h4><p>Without looking, say the chapter's main idea, list its major topics, recall the key formulae/terms/events and explain one example.</p>`},
+  {title:`${pointPages.length+8}. Self-Test`,html:`<div class="exambox"><p><b>1.</b> Can you explain the main idea in simple language?</p><p><b>2.</b> Can you explain every listed topic without copying the notes?</p><p><b>3.</b> Can you apply the concept to a new question?</p><p><b>4.</b> Can you recall the important formulae, terms, events or themes?</p><p><b>5.</b> Can you write a complete 3–5 mark answer?</p></div><h4>Final check</h4><p>If any answer is “no”, return only to that topic page and practise it again.</p>`}
+ ];
+ return pages;
+}
+
+const __oldOpenNote=openNote;
+openNote=function(s,i){
+ const n=data[s][i];
+ show('notes');
+ const box=document.getElementById('noteBox');
+ const fav=appState.favorites.includes(s+'::'+i);
+ const done=isCompleted(s,i);
+ const pages=makeFullNotes(s,n[0],i);
+ box.innerHTML=`
+ <button class="btn back" onclick="openSubject('${s}')">← Back to ${s}</button>
+ <div class="notes-brand"><span class="att-mark">A</span><b>AT STUDY</b></div><h2>${n[0]} <button class="favorite ${fav?'active':''}" onclick="toggleFavorite('${s}',${i})" title="Save chapter">★</button></h2>
+ <p class="tag">${s} • Chapter ${i+1} • Complete Study Notes</p>
+ <div class="chapter-nav">
+   <button class="btn" onclick="markCompleted('${s}',${i});this.textContent='✓ Completed'">${done?'✓ Completed':'Mark as Complete'}</button>
+   <button class="btn" onclick="window.print()">🖨️ Print / Save PDF</button>
+ </div>
+ <div class="full-notes">
+ ${pages.map((p,k)=>`<section class="full-note-page">
+   <div class="page-label">AT Study Notes • Page ${k+1} of ${pages.length}</div>
+   <h3>${p.title}</h3>${p.html}
+ </section>`).join('')}
+ </div>
+ <h2 style="margin:35px 0 18px">📝 Practice Questions</h2>
+ ${makePracticeBlock(s,i)}
+ `;
+ window.scrollTo(0,0);
+}
+function makePracticeBlock(s,i){
+ const n=data[s][i];
+ const q=boardQuestions[s]?.[i];
+ let qs=q?[q[1],q[2]]:[`Explain the main ideas of ${n[0]}.`,`Write a detailed answer using the important concepts from this chapter.`];
+ return `<div class="practice-page"><div class="page-label">ATT Practice</div><h3>Important Questions</h3>
+ ${qs.map((x,j)=>`<div class="practice-q"><b>Question ${j+1}</b><p>${escHTML(x)}</p><p style="color:var(--muted)">Write a complete answer using the notes. Include definitions, steps, examples or evidence wherever required.</p></div>`).join('')}
+ </div>`;
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+ document.body.classList.toggle('light',appState.theme==='light');
+ updateHomeStats();renderSubjects();
+});
+renderSubjects();updateHomeStats();
+</script>
+<footer><b>AT STUDY</b> • Class 10 • Learn • Practice • Improve</footer>
+<div id="toast"></div>
+</body>
+</html>
