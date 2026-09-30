@@ -1,1 +1,20 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Thakur Studys</title><link rel="stylesheet" href="style.css"></head><body><header><h1>Thakur Studys</h1><p>CBSE Class 10 • Notes • Formulas • Practice</p></header><nav><a href="#subjects">Subjects</a><a href="#formulas">Formula Hub</a><a href="#pyq">PYQs</a><a href="#progress">Progress</a></nav><main><section class="hero"><b>CBSE CLASS 10</b><h2>Study smarter with Thakur Studys.</h2><p>Chapters, formulas and board practice in one place.</p><input id="search" placeholder="Search chapters..."></section><section id="subjects"><h2>📚 Subjects</h2><div id="subjectsGrid" class="grid"></div></section><section id="formulas"><h2>🧮 Formula Hub</h2><button onclick="showFormulas('math')">Maths</button><button onclick="showFormulas('physics')">Physics</button><div id="formulaBox"></div></section><section id="pyq"><h2>📝 PYQs</h2><div class="grid"><a class="card" target="_blank" href="https://www.cbse.gov.in/cbsenew/question-paper.html">Official CBSE Question Papers</a><a class="card" target="_blank" href="https://cbseacademic.nic.in/SQP_CLASSX_2026-27.html">CBSE 2026–27 Sample Papers</a></div></section><section id="progress"><h2>📊 Progress</h2><div class="bar"><i id="bar"></i></div><p id="progressText"></p></section></main><footer>© 2026 Thakur Studys</footer><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Thakur Studys | CBSE Class 10</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<header><div class="brand">Thakur Studys</div><div class="powered">Powered by Aditya Thakur</div>
+<p>CBSE Class 10 • Notes • Formulas • Quiz • PYQs</p></header>
+<nav><a href="#subjects">Subjects</a><a href="#notes">Full Notes</a><a href="#formulas">Formula Hub</a><a href="#quiz">Quiz</a><a href="#pyqs">PYQs</a><a href="#progress">Progress</a></nav>
+<main>
+<section class="hero"><h1>Study smarter with Thakur Studys</h1><p>Original chapter explanations, key points, formulas, practice quiz and official CBSE paper links.</p>
+<input id="search" placeholder="Search a chapter, topic or formula..."></section>
+<section id="subjects"><h2>Subjects & Chapters</h2><div id="subjectCards" class="grid"></div></section>
+<section id="notes"><h2>Fully Explained Chapter Notes</h2><div id="notesBox"></div></section>
+<section id="formulas"><h2>Formula Hub</h2><div class="tabs"><button onclick="showFormulas('Maths')">Maths</button><button onclick="showFormulas('Physics')">Physics</button></div><div id="formulaBox"></div></section>
+<section id="quiz"><h2>Quiz Zone</h2><p>15 original practice questions. Choose an answer and submit.</p><div id="quizBox"></div><button class="primary" onclick="submitQuiz()">Submit Quiz</button><div id="score"></div></section>
+<section id="pyqs"><h2>PYQs & Board Practice</h2><div class="card"><p>Use official CBSE pages for question papers and sample papers.</p>
+<a class="primary link" href="https://www.cbse.gov.in/cbsenew/question-paper.html" target="_blank">Official CBSE Question Papers</a>
+<a class="primary link" href="https://cbseacademic.nic.in/SQP_CLASSX_2026-27.html" target="_blank">CBSE 2026–27 Sample Papers & Marking Schemes</a></div></section>
+<section id="progress"><h2>Study Progress</h2><p id="progressText">0% completed</p><div class="bar"><span id="progressBar"></span></div><p>Tick chapters as you finish them. Progress is saved on this device.</p></section>
+</main><footer><strong>Thakur Studys</strong><br>Powered by Aditya Thakur</footer>
+<script src="app.js"></script></body></html>
