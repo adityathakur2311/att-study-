@@ -237,27 +237,46 @@ renderChapters();
 
 function fillPracticeSubjects(){
  const exam=$("examSelect").value;
- const subjects=exam==="JEE"?["Physics","Chemistry","Mathematics"]:["Physics","Chemistry","Biology"];
- $("practiceSubject").innerHTML=subjects.map(s=>`<option>${s}</option>`).join("");
+ const subjects=exam==="JEE"?["All subjects","Physics","Chemistry","Mathematics"]:["All subjects","Physics","Chemistry","Biology"];
+ $("practiceSubject").innerHTML=subjects.map(s=>`<option value="${s}">${s}</option>`).join("");
 }
 $("examSelect").addEventListener("change",fillPracticeSubjects); fillPracticeSubjects();
-
+const TOTAL_SETS=30;
+function shuffle(items){return items.slice().sort(()=>Math.random()-.5);}
+function buildSet(pool,count){
+ if(!pool.length)return [];
+ const shuffled=shuffle(pool), out=[];
+ for(let i=0;i<count;i++) out.push({...shuffled[i%shuffled.length]});
+ return shuffle(out);
+}
 $("startQuiz").addEventListener("click",()=>{
  const exam=$("examSelect").value, subject=$("practiceSubject").value, diff=$("difficulty").value;
  activeSet = Number($("setSelect").value || 1);
- const filtered=questions.filter(q=>q.exam===exam&&q.subject===subject&&(diff==="All"||q.difficulty===diff));
- // Keep every practice test at 25 questions. If the selected subject/difficulty
- // has a small starter pool, broaden to the selected exam before reusing items.
- const examPool=questions.filter(q=>q.exam===exam&&(diff==="All"||q.difficulty===diff));
- const pool=filtered.length>=25?filtered:(examPool.length?examPool:questions.filter(q=>q.exam===exam));
- if(!pool.length){$("quizCard").innerHTML=`<div class="quiz-welcome"><h3>Questions coming soon</h3><p>There are no questions available for this exam yet.</p></div>`;$("quizProgress").textContent="No questions for this filter";return;}
- const shuffled=pool.slice().sort(()=>Math.random()-.5);
- activeQuestions=Array.from({length:25},(_,i)=>({...shuffled[i%shuffled.length]}));
- activeQuestions=activeQuestions.sort(()=>Math.random()-.5); questionIndex=0; answered=false; renderQuestion();
+ const examSubjects=exam==="JEE"?["Physics","Chemistry","Mathematics"]:["Physics","Chemistry","Biology"];
+ const byFilter=questions.filter(q=>q.exam===exam&&(subject==="All subjects"||q.subject===subject)&&(diff==="All"||q.difficulty===diff));
+ let target=25;
+ if(subject==="All subjects") target=exam==="JEE"?100:180;
+ if(!byFilter.length){$("quizCard").innerHTML=`<div class="quiz-welcome"><h3>Questions coming soon</h3><p>No questions are available for this exam and selection yet.</p></div>`;$("quizProgress").textContent="No questions for this filter";return;}
+ if(subject!=="All subjects"){
+   // Never mix subjects when a specific subject is selected. Repeat only from that subject's pool if needed.
+   activeQuestions=buildSet(byFilter,target);
+ } else if(exam==="JEE") {
+   // JEE full set: distribute 100 questions across Physics, Chemistry and Mathematics.
+   const counts={Physics:34,Chemistry:33,Mathematics:33}; activeQuestions=[];
+   examSubjects.forEach(s=>activeQuestions.push(...buildSet(byFilter.filter(q=>q.subject===s),counts[s])));
+   activeQuestions=shuffle(activeQuestions);
+ } else {
+   // NEET-style full set: 45 Physics + 45 Chemistry + 90 Biology = 180 questions.
+   const counts={Physics:45,Chemistry:45,Biology:90}; activeQuestions=[];
+   examSubjects.forEach(s=>{const pool=byFilter.filter(q=>q.subject===s); if(pool.length) activeQuestions.push(...buildSet(pool,counts[s]));});
+   if(activeQuestions.length!==180){$("quizCard").innerHTML=`<div class="quiz-welcome"><h3>NEET set needs more questions</h3><p>Add questions for Physics, Chemistry and Biology to build the full 180-question set.</p></div>`;$("quizProgress").textContent="Question bank incomplete";return;}
+   activeQuestions=shuffle(activeQuestions);
+ }
+ questionIndex=0; answered=false; renderQuestion();
 });
 function renderQuestion(){
  const q=activeQuestions[questionIndex]; answered=false;
- $("quizProgress").textContent=`Set ${activeSet} of 40 · Question ${questionIndex+1} of ${activeQuestions.length}`;
+ $("quizProgress").textContent=`Set ${activeSet} of ${TOTAL_SETS} · Question ${questionIndex+1} of ${activeQuestions.length}`;
  $("quizCard").innerHTML=`<div class="question-top"><span>${q.exam} · ${q.subject} · ${q.difficulty}</span><span>${escapeHtml(q.chapter)}</span></div><div class="question-text">${questionIndex+1}. ${escapeHtml(q.q)}</div><div class="options">${q.options.map((o,i)=>`<button class="option" data-index="${i}">${String.fromCharCode(65+i)}. ${escapeHtml(o)}</button>`).join("")}</div><div id="feedback"></div><div class="next-row"><button class="btn primary" id="nextQuestion" disabled>${questionIndex===activeQuestions.length-1?"Finish set":"Next question"} →</button></div>`;
  document.querySelectorAll(".option").forEach(btn=>btn.addEventListener("click",()=>answerQuestion(Number(btn.dataset.index))));
  $("nextQuestion").addEventListener("click",()=>{if(!answered)return;if(questionIndex<activeQuestions.length-1){questionIndex++;renderQuestion();}else finishQuiz();});
@@ -269,8 +288,8 @@ function answerQuestion(choice){
  $("nextQuestion").disabled=false; saveLeaderboard();
 }
 function finishQuiz(){
- $("quizCard").innerHTML=`<div class="quiz-welcome"><span class="quiz-icon">✦</span><h3>Set ${activeSet} of 40 complete!</h3><p>You completed all 25 questions. Your current total is <b>${score} points</b>.</p><button class="btn primary" id="again">${activeSet < 40 ? "Start set " + (activeSet + 1) : "Restart set 1"}</button></div>`;
- $("quizProgress").textContent=`Set ${activeSet} of 40 completed`;$("again").addEventListener("click",()=>{const next=activeSet<40?activeSet+1:1;$("setSelect").value=String(next);$("startQuiz").click();});saveLeaderboard();
+ $("quizCard").innerHTML=`<div class="quiz-welcome"><span class="quiz-icon">✦</span><h3>Set ${activeSet} of ${TOTAL_SETS} complete!</h3><p>You completed all ${activeQuestions.length} questions. Your current total is <b>${score} points</b>.</p><button class="btn primary" id="again">${activeSet < TOTAL_SETS ? "Start set " + (activeSet + 1) : "Restart set 1"}</button></div>`;
+ $("quizProgress").textContent=`Set ${activeSet} of ${TOTAL_SETS} completed`;$("again").addEventListener("click",()=>{const next=activeSet<TOTAL_SETS?activeSet+1:1;$("setSelect").value=String(next);$("startQuiz").click();});saveLeaderboard();
 }
 
 function renderFormulas(subject){
