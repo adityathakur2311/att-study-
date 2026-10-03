@@ -244,8 +244,14 @@ $("examSelect").addEventListener("change",fillPracticeSubjects); fillPracticeSub
 
 $("startQuiz").addEventListener("click",()=>{
  const exam=$("examSelect").value, subject=$("practiceSubject").value, diff=$("difficulty").value;
- activeQuestions=questions.filter(q=>q.exam===exam&&q.subject===subject&&(diff==="All"||q.difficulty===diff));
- if(!activeQuestions.length){$("quizCard").innerHTML=`<div class="quiz-welcome"><h3>More questions coming soon</h3><p>There are no starter questions for this filter yet. Try another subject or difficulty.</p></div>`;$("quizProgress").textContent="No questions for this filter";return;}
+ const filtered=questions.filter(q=>q.exam===exam&&q.subject===subject&&(diff==="All"||q.difficulty===diff));
+ // Keep every practice test at 25 questions. If the selected subject/difficulty
+ // has a small starter pool, broaden to the selected exam before reusing items.
+ const examPool=questions.filter(q=>q.exam===exam&&(diff==="All"||q.difficulty===diff));
+ const pool=filtered.length>=25?filtered:(examPool.length?examPool:questions.filter(q=>q.exam===exam));
+ if(!pool.length){$("quizCard").innerHTML=`<div class="quiz-welcome"><h3>Questions coming soon</h3><p>There are no questions available for this exam yet.</p></div>`;$("quizProgress").textContent="No questions for this filter";return;}
+ const shuffled=pool.slice().sort(()=>Math.random()-.5);
+ activeQuestions=Array.from({length:25},(_,i)=>({...shuffled[i%shuffled.length]}));
  activeQuestions=activeQuestions.sort(()=>Math.random()-.5); questionIndex=0; answered=false; renderQuestion();
 });
 function renderQuestion(){
