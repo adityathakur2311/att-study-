@@ -1,31 +1,24 @@
-THAKUR STUDYS — WEBSITE STARTER
-================================
+THAKUR STUDYS — WEBSITE UPGRADE STARTER
 Brand: Thakur Studys
 Attribution: Powered by Aditya Thakur
-Board/level: CBSE Class 11 Science
+Board/level: CBSE Class 11 Science, with JEE and NEET practice paths
 
-HOW TO PREVIEW
-1. Extract this ZIP.
-2. Open index.html in a web browser.
+FILES
+- index.html: page structure
+- style.css: responsive purple/blue/cyan theme
+- app.js: chapter notes data, formula hub, sample MCQ practice, scoring, local leaderboard
 
-HOW TO PUBLISH WITH GITHUB PAGES
-1. Open your GitHub repository.
-2. Upload index.html to the repository root (replace the old index.html if asked).
-3. Commit the changes.
-4. In repository Settings > Pages, make sure GitHub Pages is enabled for the correct branch/root.
-5. Open your existing Pages URL after it finishes updating.
+HOW TO UPDATE YOUR GITHUB PAGES SITE
+1. Download and extract this ZIP on your phone/computer.
+2. Open your GitHub repository and use Add file > Upload files.
+3. Upload index.html, style.css and app.js from the extracted folder to the repository root.
+4. Commit changes to the same branch used by GitHub Pages.
+5. Open the Pages URL and refresh. If an old version remains, try a hard refresh or wait a few minutes.
 
-WHAT'S INCLUDED
-- Responsive purple, blue and cyan theme
-- Physics, Chemistry and Mathematics subject cards
-- Searchable sample chapter notes
-- Formula quick-sheet
-- Interactive multiple-choice quiz with score tracking
-- Study Assistant chat interface with prepared demo answers
-
-IMPORTANT
-The Study Assistant in this starter website is a built-in demo, not a live AI model.
-For real open-ended AI responses, connect a trusted AI API through a secure backend/server.
-Do not put private API keys directly in index.html or any public GitHub repository.
-The included notes and question bank are starter samples. Verify syllabus coverage and
-check/add official CBSE/NCERT content and previous-year questions before relying on it for exams.
+IMPORTANT LIMITATIONS
+- This is an upgraded starter, not a finished 50,000-question platform. It includes a chapter library with topic explanations and a small original sample question bank. Add and review further material in batches against the current official syllabus.
+- Chapter lists and exam syllabi may change between academic sessions. Verify the current CBSE, JEE and NEET syllabi before relying on coverage.
+- Scoring is +4 correct, -1 incorrect, 0 skipped.
+- The leaderboard currently uses local browser storage. It is visible only in that browser/device and is not a shared global leaderboard.
+- A shared leaderboard and real student accounts require a backend/database and secure authentication. Do not put private API keys or database admin credentials in public HTML/JavaScript.
+- The assistant/chat demo from earlier versions is not a live AI service unless a secure backend is connected.
