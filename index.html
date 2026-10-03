@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <a class="brand" href="#"><span class="logo">TS</span><span><b>Thakur Studys</b><small>Powered by Aditya Thakur</small></span></a>
-  <button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
+  <div class="top-actions"><button class="btn ghost account-btn" id="accountBtn">Login / Sign up</button><button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button></div>
   <nav id="nav">
     <a href="#notes">Notes</a><a href="#practice">JEE / NEET</a><a href="#formulas">Formula Hub</a><a href="#leaderboard">Leaderboard</a>
   </nav>
@@ -65,6 +65,24 @@
   <p class="disclaimer"><b>Important:</b> This GitHub Pages version stores scores locally in each browser. A truly shared leaderboard visible to all students needs a backend/database and secure sign-in; this page does not yet sync scores between devices.</p>
 </section>
 </main>
+<div class="auth-overlay" id="authOverlay" hidden>
+  <section class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <button class="auth-close" id="authClose" aria-label="Close login">×</button>
+    <div class="auth-logo">TS</div>
+    <span class="eyebrow">YOUR LEARNING SPACE</span>
+    <h2 id="authTitle">Welcome to Thakur Studys</h2>
+    <p class="auth-intro">Create a local demo account or sign in on this device.</p>
+    <div class="auth-tabs"><button class="auth-tab active" data-mode="login">Login</button><button class="auth-tab" data-mode="signup">Sign up</button></div>
+    <form id="authForm" class="auth-form">
+      <label id="authNameWrap" hidden>Display name<input id="authName" maxlength="24" autocomplete="nickname" placeholder="Your name"></label>
+      <label>Email<input id="authEmail" type="email" required autocomplete="email" placeholder="you@example.com"></label>
+      <label>Password<input id="authPassword" type="password" required minlength="6" autocomplete="current-password" placeholder="At least 6 characters"></label>
+      <p class="auth-error" id="authError" role="status"></p>
+      <button class="btn primary auth-submit" id="authSubmit" type="submit">Login</button>
+    </form>
+    <p class="auth-note">Demo only: account details stay in this browser. This is not secure production authentication and will not sync across devices. Use a backend such as Firebase for real accounts.</p>
+  </section>
+</div>
 <footer><a class="brand" href="#"><span class="logo">TS</span><span><b>Thakur Studys</b><small>Powered by Aditya Thakur</small></span></a><p>Learn consistently. Practice honestly. Improve every day.</p><span>© <span id="year"></span> Thakur Studys</span></footer>
 <script src="app.js"></script>
 </body></html>
