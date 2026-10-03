@@ -211,7 +211,7 @@ Mathematics:[["Quadratic roots","x = (−b ± √(b²−4ac))/(2a)","For ax²+bx
 
 let score = Number(localStorage.getItem("ts_score") || 0);
 let player = localStorage.getItem("ts_player") || "";
-let activeQuestions = [], questionIndex = 0, answered = false, currentSubjectFormula = "Physics";
+let activeQuestions = [], questionIndex = 0, answered = false, currentSubjectFormula = "Physics", activeSet = 1;
 const $ = id => document.getElementById(id);
 $("year").textContent = new Date().getFullYear();
 $("pointsDisplay").textContent = score;
@@ -244,6 +244,7 @@ $("examSelect").addEventListener("change",fillPracticeSubjects); fillPracticeSub
 
 $("startQuiz").addEventListener("click",()=>{
  const exam=$("examSelect").value, subject=$("practiceSubject").value, diff=$("difficulty").value;
+ activeSet = Number($("setSelect").value || 1);
  const filtered=questions.filter(q=>q.exam===exam&&q.subject===subject&&(diff==="All"||q.difficulty===diff));
  // Keep every practice test at 25 questions. If the selected subject/difficulty
  // has a small starter pool, broaden to the selected exam before reusing items.
@@ -256,7 +257,7 @@ $("startQuiz").addEventListener("click",()=>{
 });
 function renderQuestion(){
  const q=activeQuestions[questionIndex]; answered=false;
- $("quizProgress").textContent=`Question ${questionIndex+1} of ${activeQuestions.length}`;
+ $("quizProgress").textContent=`Set ${activeSet} of 40 · Question ${questionIndex+1} of ${activeQuestions.length}`;
  $("quizCard").innerHTML=`<div class="question-top"><span>${q.exam} · ${q.subject} · ${q.difficulty}</span><span>${escapeHtml(q.chapter)}</span></div><div class="question-text">${questionIndex+1}. ${escapeHtml(q.q)}</div><div class="options">${q.options.map((o,i)=>`<button class="option" data-index="${i}">${String.fromCharCode(65+i)}. ${escapeHtml(o)}</button>`).join("")}</div><div id="feedback"></div><div class="next-row"><button class="btn primary" id="nextQuestion" disabled>${questionIndex===activeQuestions.length-1?"Finish set":"Next question"} →</button></div>`;
  document.querySelectorAll(".option").forEach(btn=>btn.addEventListener("click",()=>answerQuestion(Number(btn.dataset.index))));
  $("nextQuestion").addEventListener("click",()=>{if(!answered)return;if(questionIndex<activeQuestions.length-1){questionIndex++;renderQuestion();}else finishQuiz();});
@@ -268,8 +269,8 @@ function answerQuestion(choice){
  $("nextQuestion").disabled=false; saveLeaderboard();
 }
 function finishQuiz(){
- $("quizCard").innerHTML=`<div class="quiz-welcome"><span class="quiz-icon">✦</span><h3>Practice set complete!</h3><p>Your current total is <b>${score} points</b>. Review explanations for questions you missed and try again.</p><button class="btn primary" id="again">Try another set</button></div>`;
- $("quizProgress").textContent="Set completed";$("again").addEventListener("click",()=>$("startQuiz").click());saveLeaderboard();
+ $("quizCard").innerHTML=`<div class="quiz-welcome"><span class="quiz-icon">✦</span><h3>Set ${activeSet} of 40 complete!</h3><p>You completed all 25 questions. Your current total is <b>${score} points</b>.</p><button class="btn primary" id="again">${activeSet < 40 ? "Start set " + (activeSet + 1) : "Restart set 1"}</button></div>`;
+ $("quizProgress").textContent=`Set ${activeSet} of 40 completed`;$("again").addEventListener("click",()=>{const next=activeSet<40?activeSet+1:1;$("setSelect").value=String(next);$("startQuiz").click();});saveLeaderboard();
 }
 
 function renderFormulas(subject){
