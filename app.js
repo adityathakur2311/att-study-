@@ -237,7 +237,7 @@ renderChapters();
 
 function fillPracticeSubjects(){
  const exam=$("examSelect").value;
- const subjects=exam==="JEE"?["All subjects","Physics","Chemistry","Mathematics"]:["All subjects","Physics","Chemistry","Biology"];
+ const subjects=exam==="JEE"?["Physics","Chemistry","Mathematics","Mix","All subjects"]:["Physics","Chemistry","Biology","Mix","All subjects"];
  $("practiceSubject").innerHTML=subjects.map(s=>`<option value="${s}">${s}</option>`).join("");
 }
 $("examSelect").addEventListener("change",fillPracticeSubjects); fillPracticeSubjects();
@@ -253,12 +253,15 @@ $("startQuiz").addEventListener("click",()=>{
  const exam=$("examSelect").value, subject=$("practiceSubject").value, diff=$("difficulty").value;
  activeSet = Number($("setSelect").value || 1);
  const examSubjects=exam==="JEE"?["Physics","Chemistry","Mathematics"]:["Physics","Chemistry","Biology"];
- const byFilter=questions.filter(q=>q.exam===exam&&(subject==="All subjects"||q.subject===subject)&&(diff==="All"||q.difficulty===diff));
+ const byFilter=questions.filter(q=>q.exam===exam&&(subject==="All subjects"||subject==="Mix"||q.subject===subject)&&(diff==="All"||q.difficulty===diff));
  let target=25;
  if(subject==="All subjects") target=exam==="JEE"?100:180;
  if(!byFilter.length){$("quizCard").innerHTML=`<div class="quiz-welcome"><h3>Questions coming soon</h3><p>No questions are available for this exam and selection yet.</p></div>`;$("quizProgress").textContent="No questions for this filter";return;}
- if(subject!=="All subjects"){
-   // Never mix subjects when a specific subject is selected. Repeat only from that subject's pool if needed.
+ if(subject!=="All subjects" && subject!=="Mix"){
+   // A specific subject selection contains only that subject.
+   activeQuestions=buildSet(byFilter,target);
+ } else if(subject==="Mix") {
+   // Mix gives a 25-question practice set drawn across the selected exam subjects.
    activeQuestions=buildSet(byFilter,target);
  } else if(exam==="JEE") {
    // JEE full set: distribute 100 questions across Physics, Chemistry and Mathematics.
