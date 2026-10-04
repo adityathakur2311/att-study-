@@ -86,4 +86,14 @@
 </div>
 <footer><a class="brand" href="#"><span class="logo">TS</span><span><b>Thakur Studys</b><small>Powered by Aditya Thakur</small></span></a><p>Learn consistently. Practice honestly. Improve every day.</p><span>© <span id="year"></span> Thakur Studys</span></footer>
 <script src="app.js"></script>
-</body></html>
+<div id="aiAssistantFab" title="Thakur Studys AI">🤖</div>
+<div id="aiAssistantPanel" class="ai-panel" aria-hidden="true"><div class="ai-head"><b>Thakur Studys AI</b><button id="aiClose">×</button></div>
+<div id="aiMessages" class="ai-messages"><div class="ai-msg bot">Hi! Ask me a Class 11 Physics, Chemistry, Maths or Biology question.</div></div>
+<div class="ai-input-row"><input id="aiInput" placeholder="Ask a study question…"><button id="aiSend">Send</button></div></div>
+<script>
+(()=>{const f=document.getElementById('aiAssistantFab'),p=document.getElementById('aiAssistantPanel'),c=document.getElementById('aiClose'),i=document.getElementById('aiInput'),s=document.getElementById('aiSend'),m=document.getElementById('aiMessages');if(!f)return;
+f.onclick=()=>{p.classList.add('open');p.setAttribute('aria-hidden','false');i.focus()};c.onclick=()=>{p.classList.remove('open');p.setAttribute('aria-hidden','true')};
+function add(t,k){const d=document.createElement('div');d.className='ai-msg '+k;d.textContent=t;m.appendChild(d);m.scrollTop=m.scrollHeight}
+function answer(q){const x=q.toLowerCase();if(x.includes('newton'))return"Newton's second law: F = ma.";if(x.includes('kinetic'))return"Kinetic energy is K = ½mv².";if(x.includes('mole'))return"Use n = mass ÷ molar mass.";if(x.includes('derivative'))return"For xⁿ, d(xⁿ)/dx = nxⁿ⁻¹.";if(x.includes('photosynthesis'))return"Light reactions occur on thylakoid membranes; the Calvin cycle occurs in the stroma.";return"I can help with Class 11 Physics, Chemistry, Maths and Biology. Send the exact question for step-by-step help."}
+function go(){const q=i.value.trim();if(!q)return;add(q,'user');i.value='';setTimeout(()=>add(answer(q),'bot'),180)}s.onclick=go;i.onkeydown=e=>{if(e.key==='Enter')go()}})();
+</script></body></html>
