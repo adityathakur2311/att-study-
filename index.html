@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <a class="brand" href="#"><span class="logo">TS</span><span><b>Thakur Studys</b><small>Powered by Aditya Thakur</small></span></a>
-  <div class="top-actions"><button class="btn ghost account-btn" id="accountBtn">Login / Sign up</button><button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button></div>
+  <button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
   <nav id="nav">
     <a href="#notes">Notes</a><a href="#practice">JEE / NEET</a><a href="#formulas">Formula Hub</a><a href="#leaderboard">Leaderboard</a>
   </nav>
@@ -38,17 +38,16 @@
 </section>
 
 <section class="section tinted" id="practice">
-  <div class="section-head"><div><span class="eyebrow">PRACTICE ZONE</span><h2>JEE & NEET question practice</h2><p>Choose one subject for subject-only practice, Mix for 25 questions across subjects, or All subjects for a full exam-style set. Correct answers add 4 points; incorrect answers deduct 1 point.</p></div><div class="pill">+4 correct · −1 wrong · 0 skipped</div></div>
+  <div class="section-head"><div><span class="eyebrow">PRACTICE ZONE</span><h2>JEE & NEET question practice</h2><p>Practice MCQs by exam, subject and difficulty. Correct answers add 4 points; incorrect answers deduct 1 point.</p></div><div class="pill">+4 correct · −1 wrong · 0 skipped</div></div>
   <div class="practice-controls">
     <label>Exam<select id="examSelect"><option value="JEE">JEE</option><option value="NEET">NEET</option></select></label>
-    <label>Subject<select id="practiceSubject"></select></label>
+    <label>Subject<select id="practiceSubject"></select></label><label>Set<select id="setSelect"><option value="1">Set 1</option><option value="2">Set 2</option><option value="3">Set 3</option><option value="4">Set 4</option><option value="5">Set 5</option><option value="6">Set 6</option><option value="7">Set 7</option><option value="8">Set 8</option><option value="9">Set 9</option><option value="10">Set 10</option><option value="11">Set 11</option><option value="12">Set 12</option><option value="13">Set 13</option><option value="14">Set 14</option><option value="15">Set 15</option><option value="16">Set 16</option><option value="17">Set 17</option><option value="18">Set 18</option><option value="19">Set 19</option><option value="20">Set 20</option><option value="21">Set 21</option><option value="22">Set 22</option><option value="23">Set 23</option><option value="24">Set 24</option><option value="25">Set 25</option><option value="26">Set 26</option><option value="27">Set 27</option><option value="28">Set 28</option><option value="29">Set 29</option><option value="30">Set 30</option></select></label>
     <label>Difficulty<select id="difficulty"><option value="All">All levels</option><option>Easy</option><option>Medium</option><option>Hard</option></select></label>
-    <label>Practice set<select id="setSelect"><option value="1">Set 1 of 30</option><option value="2">Set 2 of 30</option><option value="3">Set 3 of 30</option><option value="4">Set 4 of 30</option><option value="5">Set 5 of 30</option><option value="6">Set 6 of 30</option><option value="7">Set 7 of 30</option><option value="8">Set 8 of 30</option><option value="9">Set 9 of 30</option><option value="10">Set 10 of 30</option><option value="11">Set 11 of 30</option><option value="12">Set 12 of 30</option><option value="13">Set 13 of 30</option><option value="14">Set 14 of 30</option><option value="15">Set 15 of 30</option><option value="16">Set 16 of 30</option><option value="17">Set 17 of 30</option><option value="18">Set 18 of 30</option><option value="19">Set 19 of 30</option><option value="20">Set 20 of 30</option><option value="21">Set 21 of 30</option><option value="22">Set 22 of 30</option><option value="23">Set 23 of 30</option><option value="24">Set 24 of 30</option><option value="25">Set 25 of 30</option><option value="26">Set 26 of 30</option><option value="27">Set 27 of 30</option><option value="28">Set 28 of 30</option><option value="29">Set 29 of 30</option><option value="30">Set 30 of 30</option></select></label>
-    <button class="btn primary" id="startQuiz">Start selected set</button>
+    <button class="btn primary" id="startQuiz">Start / Restart practice</button>
   </div>
   <div class="quiz-card" id="quizCard"><div class="quiz-welcome"><span class="quiz-icon">✎</span><h3>Ready when you are</h3><p>Select your exam and subject, then start a practice set.</p></div></div>
   <div class="quiz-footer"><span id="quizProgress">No active practice set</span><span>Practice points: <b id="pointsDisplay">0</b></span></div>
-  <p class="disclaimer">There are 40 practice sets, with 25 questions per set. The current starter question bank is small, so some questions may repeat until more syllabus-mapped questions are added and reviewed.</p>
+  <p class="disclaimer">This version contains a small starter question bank to demonstrate the practice flow, not 50,000 verified questions. More original, syllabus-mapped questions should be added and reviewed in batches.</p>
 </section>
 
 <section class="section" id="formulas">
@@ -66,34 +65,6 @@
   <p class="disclaimer"><b>Important:</b> This GitHub Pages version stores scores locally in each browser. A truly shared leaderboard visible to all students needs a backend/database and secure sign-in; this page does not yet sync scores between devices.</p>
 </section>
 </main>
-<div class="auth-overlay" id="authOverlay" hidden>
-  <section class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
-    <button class="auth-close" id="authClose" aria-label="Close login">×</button>
-    <div class="auth-logo">TS</div>
-    <span class="eyebrow">YOUR LEARNING SPACE</span>
-    <h2 id="authTitle">Welcome to Thakur Studys</h2>
-    <p class="auth-intro">Create a local demo account or sign in on this device.</p>
-    <div class="auth-tabs"><button class="auth-tab active" data-mode="login">Login</button><button class="auth-tab" data-mode="signup">Sign up</button></div>
-    <form id="authForm" class="auth-form">
-      <label id="authNameWrap" hidden>Display name<input id="authName" maxlength="24" autocomplete="nickname" placeholder="Your name"></label>
-      <label>Email<input id="authEmail" type="email" required autocomplete="email" placeholder="you@example.com"></label>
-      <label>Password<input id="authPassword" type="password" required minlength="6" autocomplete="current-password" placeholder="At least 6 characters"></label>
-      <p class="auth-error" id="authError" role="status"></p>
-      <button class="btn primary auth-submit" id="authSubmit" type="submit">Login</button>
-    </form>
-    <p class="auth-note">Demo only: account details stay in this browser. This is not secure production authentication and will not sync across devices. Use a backend such as Firebase for real accounts.</p>
-  </section>
-</div>
 <footer><a class="brand" href="#"><span class="logo">TS</span><span><b>Thakur Studys</b><small>Powered by Aditya Thakur</small></span></a><p>Learn consistently. Practice honestly. Improve every day.</p><span>© <span id="year"></span> Thakur Studys</span></footer>
 <script src="app.js"></script>
-<div id="aiAssistantFab" title="Thakur Studys AI">🤖</div>
-<div id="aiAssistantPanel" class="ai-panel" aria-hidden="true"><div class="ai-head"><b>Thakur Studys AI</b><button id="aiClose">×</button></div>
-<div id="aiMessages" class="ai-messages"><div class="ai-msg bot">Hi! Ask me a Class 11 Physics, Chemistry, Maths or Biology question.</div></div>
-<div class="ai-input-row"><input id="aiInput" placeholder="Ask a study question…"><button id="aiSend">Send</button></div></div>
-<script>
-(()=>{const f=document.getElementById('aiAssistantFab'),p=document.getElementById('aiAssistantPanel'),c=document.getElementById('aiClose'),i=document.getElementById('aiInput'),s=document.getElementById('aiSend'),m=document.getElementById('aiMessages');if(!f)return;
-f.onclick=()=>{p.classList.add('open');p.setAttribute('aria-hidden','false');i.focus()};c.onclick=()=>{p.classList.remove('open');p.setAttribute('aria-hidden','true')};
-function add(t,k){const d=document.createElement('div');d.className='ai-msg '+k;d.textContent=t;m.appendChild(d);m.scrollTop=m.scrollHeight}
-function answer(q){const x=q.toLowerCase();if(x.includes('newton'))return"Newton's second law: F = ma.";if(x.includes('kinetic'))return"Kinetic energy is K = ½mv².";if(x.includes('mole'))return"Use n = mass ÷ molar mass.";if(x.includes('derivative'))return"For xⁿ, d(xⁿ)/dx = nxⁿ⁻¹.";if(x.includes('photosynthesis'))return"Light reactions occur on thylakoid membranes; the Calvin cycle occurs in the stroma.";return"I can help with Class 11 Physics, Chemistry, Maths and Biology. Send the exact question for step-by-step help."}
-function go(){const q=i.value.trim();if(!q)return;add(q,'user');i.value='';setTimeout(()=>add(answer(q),'bot'),180)}s.onclick=go;i.onkeydown=e=>{if(e.key==='Enter')go()}})();
-</script></body></html>
+<div id="thakur-ai-float" title="Thakur Studys AI">🤖</div><div id="thakur-ai-box" aria-hidden="true"><div class="ts-ai-title"><b>Thakur Studys AI</b><button id="ts-ai-close">×</button></div><div id="ts-ai-chat"><div class="ts-ai-bot">Hi! Ask a Class 11 Physics, Chemistry, Maths or Biology question.</div></div><div class="ts-ai-row"><input id="ts-ai-input" placeholder="Ask a study question…"><button id="ts-ai-send">Send</button></div></div><script>(()=>{const f=document.getElementById('thakur-ai-float'),b=document.getElementById('thakur-ai-box'),c=document.getElementById('ts-ai-close'),i=document.getElementById('ts-ai-input'),s=document.getElementById('ts-ai-send'),chat=document.getElementById('ts-ai-chat');if(!f)return;f.onclick=()=>{b.classList.add('show');b.setAttribute('aria-hidden','false');i.focus()};c.onclick=()=>{b.classList.remove('show');b.setAttribute('aria-hidden','true')};function send(){const q=i.value.trim();if(!q)return;const d=document.createElement('div');d.className='ts-ai-user';d.textContent=q;chat.appendChild(d);i.value='';const r=document.createElement('div');r.className='ts-ai-bot';r.textContent=q.toLowerCase().includes('newton')?'Newton’s second law: F = ma.':q.toLowerCase().includes('mole')?'n = mass ÷ molar mass.':q.toLowerCase().includes('kinetic')?'K = ½mv².':q.toLowerCase().includes('derivative')?'d(xⁿ)/dx = nxⁿ⁻¹.':'Send the exact Class 11 question and I’ll explain it.';chat.appendChild(r);chat.scrollTop=chat.scrollHeight}s.onclick=send;i.onkeydown=e=>{if(e.key==='Enter')send()}})();</script></body></html>
