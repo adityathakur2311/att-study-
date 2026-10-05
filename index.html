@@ -68,11 +68,87 @@
 <footer><a class="brand" href="#"><span class="logo">TS</span><span><b>Thakur Studys</b><small>Powered by Aditya Thakur</small></span></a><p>Learn consistently. Practice honestly. Improve every day.</p><span>© <span id="year"></span> Thakur Studys</span></footer>
 <script src="app.js"></script>
 <button id="thakur-ai-tab" type="button" aria-label="Open Your Assistant"><span class="robot-face">🤖</span><span>Your<br>Assistant</span></button>
-<div id="thakur-ai-box" aria-hidden="true"><div class="ts-ai-title"><b>🤖 Your Assistant</b><button id="ts-ai-close">×</button></div><div id="ts-ai-chat"><div class="ts-ai-bot">Hi! Ask me a Class 11 Physics, Chemistry, Maths or Biology question.</div></div><div class="ts-ai-row"><input id="ts-ai-input" placeholder="Ask a study question…"><button id="ts-ai-send">Send</button></div></div>
+<div id="thakur-ai-box" aria-hidden="true">
+  <div class="ts-ai-title"><div><b>🤖 Your Assistant</b><small>Class 11 Study Tutor</small></div><button id="ts-ai-close" type="button" aria-label="Close assistant">×</button></div>
+  <div id="ts-ai-chat"><div class="ts-ai-bot">Hi! I’m your Class 11 study assistant. Ask me a Physics, Chemistry, Maths or Biology question.</div></div>
+  <div class="ts-ai-row"><input id="ts-ai-input" autocomplete="off" placeholder="Ask a study question…"><button id="ts-ai-send" type="button">Send</button></div>
+</div>
 <script>
-(()=>{const f=document.getElementById('thakur-ai-tab'),b=document.getElementById('thakur-ai-box'),c=document.getElementById('ts-ai-close'),i=document.getElementById('ts-ai-input'),s=document.getElementById('ts-ai-send'),chat=document.getElementById('ts-ai-chat');if(!f)return;
-function clamp(){const r=f.getBoundingClientRect();f.style.left=Math.max(4,Math.min(innerWidth-r.width-4,r.left))+'px';f.style.top=Math.max(70,Math.min(innerHeight-r.height-4,r.top))+'px';f.style.right='auto';f.style.bottom='auto'}
-f.onclick=()=>{if(f.dataset.dragged==='1'){f.dataset.dragged='0';return}b.classList.add('show');b.setAttribute('aria-hidden','false');document.body.classList.add('ai-open');i.focus()};c.onclick=()=>{b.classList.remove('show');b.setAttribute('aria-hidden','true');document.body.classList.remove('ai-open')};
-let drag=false,sx=0,sy=0,ox=0,oy=0;f.addEventListener('pointerdown',e=>{drag=true;f.dataset.dragged='0';const r=f.getBoundingClientRect();sx=e.clientX;sy=e.clientY;ox=r.left;oy=r.top;f.setPointerCapture(e.pointerId)});f.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.abs(dx)+Math.abs(dy)>6)f.dataset.dragged='1';f.style.left=Math.max(4,Math.min(innerWidth-rw(),ox+dx))+'px';f.style.top=Math.max(70,Math.min(innerHeight-rh(),oy+dy))+'px';f.style.right='auto';f.style.bottom='auto'});f.addEventListener('pointerup',()=>drag=false);function rw(){return f.getBoundingClientRect().width}function rh(){return f.getBoundingClientRect().height}
-function add(t,k){const d=document.createElement('div');d.className='ts-ai-'+k;d.textContent=t;chat.appendChild(d);chat.scrollTop=chat.scrollHeight}function reply(q){q=q.toLowerCase();if(q.includes('newton'))return'Newton’s second law: F = ma. Net force determines acceleration.';if(q.includes('mole'))return'n = mass ÷ molar mass.';if(q.includes('kinetic'))return'K = ½mv².';if(q.includes('sin')&&q.includes('cos'))return'sin²θ + cos²θ = 1.';return'Ask the exact Class 11 question and I’ll explain the concept step by step.'}function send(){const q=i.value.trim();if(!q)return;add(q,'user');i.value='';setTimeout(()=>add(reply(q),'bot'),150)}s.onclick=send;i.onkeydown=e=>{if(e.key==='Enter')send()}})();
+(()=>{
+  const f=document.getElementById('thakur-ai-tab'), b=document.getElementById('thakur-ai-box'), c=document.getElementById('ts-ai-close'), i=document.getElementById('ts-ai-input'), s=document.getElementById('ts-ai-send'), chat=document.getElementById('ts-ai-chat');
+  if(!f||!b||!c||!i||!s||!chat)return;
+  // The assistant starts CLOSED. It opens only after the robot is tapped.
+  b.classList.remove('show'); b.setAttribute('aria-hidden','true');
+  function openAI(){b.classList.add('show');b.setAttribute('aria-hidden','false');document.body.classList.add('ai-open');setTimeout(()=>i.focus(),50)}
+  function closeAI(){b.classList.remove('show');b.setAttribute('aria-hidden','true');document.body.classList.remove('ai-open')}
+  f.addEventListener('click',e=>{if(f.dataset.dragged==='1'){f.dataset.dragged='0';return}openAI()});
+  c.addEventListener('click',closeAI);
+  b.addEventListener('click',e=>e.stopPropagation());
+  // Draggable robot button.
+  let drag=false,sx=0,sy=0,ox=0,oy=0,moved=false;
+  f.addEventListener('pointerdown',e=>{drag=true;moved=false;const r=f.getBoundingClientRect();sx=e.clientX;sy=e.clientY;ox=r.left;oy=r.top;f.setPointerCapture(e.pointerId)});
+  f.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.abs(dx)+Math.abs(dy)>8)moved=true;const w=f.getBoundingClientRect().width,h=f.getBoundingClientRect().height;f.style.left=Math.max(4,Math.min(innerWidth-w-4,ox+dx))+'px';f.style.top=Math.max(70,Math.min(innerHeight-h-4,oy+dy))+'px';f.style.right='auto';f.style.bottom='auto';});
+  f.addEventListener('pointerup',()=>{drag=false;if(moved)f.dataset.dragged='1'});f.addEventListener('pointercancel',()=>drag=false);
+  // Lightweight offline tutor: useful immediately on GitHub Pages without exposing an API key.
+  const KB=[
+   ['rotation','Rotation is motion about an axis. Angular displacement is θ, angular velocity is ω=dθ/dt, and angular acceleration is α=dω/dt. For constant α: ω=ω₀+αt and θ=ω₀t+½αt². Linear and angular quantities are related by v=rω and aₜ=rα.'],
+   ['newton','Newton’s laws: 1st law describes inertia, 2nd law gives net force F=ma, and 3rd law says interacting bodies exert equal and opposite forces on each other. Always use the net force in F=ma.'],
+   ['kinetic energy','Kinetic energy is the energy of motion: K=½mv². It is a scalar and is always non-negative for an ordinary particle.'],
+   ['potential energy','Near Earth, gravitational potential energy can be written U=mgh relative to a chosen reference level. Only changes in potential energy matter for many mechanics problems.'],
+   ['work','Work by a constant force is W=Fs cosθ. Positive work adds energy to the object/system; negative work removes energy.'],
+   ['momentum','Linear momentum p=mv. Impulse J=FΔt equals the change in momentum. In an isolated system, total momentum is conserved.'],
+   ['gravitation','Newton’s law of gravitation is F=Gm₁m₂/r². Gravitational acceleration near a spherical body is g=GM/R² at its surface.'],
+   ['projectile','For ideal projectile motion, horizontal acceleration is zero and vertical acceleration is −g. On level ground, T=2u sinθ/g, H=u²sin²θ/(2g), and R=u²sin2θ/g.'],
+   ['thermodynamics','First law: ΔU=Q−W when W is work done by the system. Q is heat supplied to the system and W is work done by it.'],
+   ['shm','In simple harmonic motion, acceleration is proportional and opposite to displacement: a=−ω²x. The period is T=2π/ω.'],
+   ['mole','One mole contains about 6.022×10²³ entities. Number of moles n=mass/molar mass and number of particles N=nNₐ.'],
+   ['periodic table','Across a period, atomic radius generally decreases while ionisation enthalpy and electronegativity generally increase. Down a group, radius generally increases. Exceptions occur because of subshell structure and shielding.'],
+   ['chemical bonding','Ionic bonding involves electrostatic attraction between ions; covalent bonding involves sharing electron pairs. Lewis structures and VSEPR help predict bonding and molecular shape.'],
+   ['hybridisation','Common Class 11 hybridisation models include sp (linear), sp² (trigonal planar electron geometry) and sp³ (tetrahedral electron geometry). Lone pairs can change the molecular shape.'],
+   ['equilibrium','At dynamic equilibrium, forward and reverse reaction rates are equal while concentrations remain constant. For Kc, use equilibrium concentrations raised to stoichiometric powers; pure solids and liquids are omitted.'],
+   ['redox','Oxidation is loss of electrons or increase in oxidation number; reduction is gain of electrons or decrease in oxidation number. They always occur together in a redox process.'],
+   ['organic chemistry','Organic chemistry studies carbon compounds. Start by identifying the functional group, parent chain, substituents and their positions, then apply systematic naming rules.'],
+   ['quadratic','For ax²+bx+c=0, x=[−b±√(b²−4ac)]/(2a). The discriminant D=b²−4ac tells the nature of the roots: D>0 distinct real roots, D=0 equal real roots, D<0 non-real conjugate roots.'],
+   ['sequence','For an arithmetic progression, aₙ=a+(n−1)d and Sₙ=n/2[2a+(n−1)d].'],
+   ['permutation','nPr=n!/(n−r)! counts ordered selections of r objects from n distinct objects.'],
+   ['combination','nCr=n!/[r!(n−r)!] counts selections where order does not matter.'],
+   ['derivative','A derivative gives the instantaneous rate of change. d(xⁿ)/dx=nxⁿ⁻¹. Product rule: (uv)′=u′v+uv′; chain rule differentiates composite functions.'],
+   ['trigonometry','sin²θ+cos²θ=1, 1+tan²θ=sec²θ and 1+cot²θ=cosec²θ.'],
+   ['straight line','Slope m=(y₂−y₁)/(x₂−x₁). Point-slope form is y−y₁=m(x−x₁), and slope-intercept form is y=mx+c.'],
+   ['cell','Prokaryotic cells lack a membrane-bound nucleus; eukaryotic cells have a true nucleus and membrane-bound organelles. Both have a plasma membrane, genetic material and ribosomes.'],
+   ['mitosis','Mitosis produces two genetically similar daughter nuclei and supports growth, repair and asexual reproduction.'],
+   ['meiosis','Meiosis involves two successive divisions and reduces chromosome number, producing genetically varied haploid cells.'],
+   ['photosynthesis','Photosynthesis converts light energy into chemical energy. In plants, light reactions occur in thylakoid membranes and carbon fixation occurs in the stroma of chloroplasts.'],
+   ['respiration','Aerobic respiration extracts energy from organic molecules. Glycolysis occurs in the cytoplasm; later aerobic stages occur mainly in mitochondria.'],
+   ['nephron','The nephron is the functional unit of the kidney. Filtration occurs at the renal corpuscle, followed by selective reabsorption and secretion along the tubule.'],
+   ['digestion','Human digestion breaks food into absorbable molecules. Major chemical digestion occurs in the mouth, stomach and small intestine, with the small intestine being the main site of absorption.']
+  ];
+  function norm(x){return x.toLowerCase().replace(/[^a-z0-9+\-*/=(). ]/g,' ').replace(/\s+/g,' ').trim()}
+  function add(t,k){const d=document.createElement('div');d.className='ts-ai-'+k;d.textContent=t;chat.appendChild(d);chat.scrollTop=chat.scrollHeight}
+  function math(q){
+    const n=norm(q);
+    let m=n.match(/(?:what is|calculate|find|solve)?\s*(\d+(?:\.\d+)?)\s*\+\s*(\d+(?:\.\d+)?)/); if(m)return `Answer: ${Number(m[1])+Number(m[2])}. I added the two numbers directly.`;
+    m=n.match(/(?:what is|calculate|find)\s*(\d+(?:\.\d+)?)\s*\*\s*(\d+(?:\.\d+)?)/); if(m)return `Answer: ${Number(m[1])*Number(m[2])}.`;
+    m=n.match(/(?:what is|calculate|find)\s*(\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)/); if(m&&Number(m[2])!==0)return `Answer: ${Number(m[1])/Number(m[2])}.`;
+    return null;
+  }
+  function reply(q){
+    const n=norm(q);
+    if(!n)return 'Type a Class 11 question and I’ll explain it step by step.';
+    if(/^(hi|hello|hey|hii|help)$/.test(n))return 'Hey! Ask me a specific Class 11 Physics, Chemistry, Maths or Biology question. I’ll give the concept, formula and reasoning.';
+    const m=math(q);if(m)return m;
+    if(/why|how|explain|define|what is|what are|meaning/.test(n)){
+      for(const [key,ans] of KB){if(n.includes(key))return ans;}
+    } else {
+      for(const [key,ans] of KB){if(n.includes(key))return ans;}
+    }
+    if(/physics|force|motion|velocity|acceleration/.test(n))return 'For a Physics problem, send the exact question with the given values and I’ll identify the formula and show the steps.';
+    if(/chemistry|chemical|atom|mole|bond/.test(n))return 'For Chemistry, send the exact reaction or numerical question. I’ll explain the concept first and then work through the calculation.';
+    if(/math|mathematics|equation|integral|probability/.test(n))return 'For Maths, send the exact problem. I’ll break it into steps and show the required formula.';
+    if(/biology|plant|cell|human|animal/.test(n))return 'For Biology, send the exact Class 11 question or topic. I’ll explain the concept clearly and point out the key exam facts.';
+    return 'I can answer many Class 11 topics offline, but I’m not connected to a live ChatGPT model from GitHub Pages. Send the exact question and I’ll try the built-in tutor first.';
+  }
+  function send(){const q=i.value.trim();if(!q)return;add(q,'user');i.value='';s.disabled=true;s.textContent='…';setTimeout(()=>{add(reply(q),'bot');s.disabled=false;s.textContent='Send'},180)}
+  s.addEventListener('click',send);i.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();send()}});
+})();
 </script></body></html>

@@ -35,3 +35,18 @@ body.quiz-open{overflow:hidden}
 @media(max-width:600px){.quiz-modal{padding:0}.quiz-modal-window{width:100%;height:100%;border-radius:0}.quiz-modal-head{padding-top:max(12px,env(safe-area-inset-top))}.quiz-modal #quizCard{padding:18px}.quiz-modal .question-text{font-size:17px}.quiz-modal .options{grid-template-columns:1fr}}
 
 .quiz-modal{touch-action:auto!important}.quiz-modal-window{pointer-events:auto!important}.quiz-modal-backdrop{pointer-events:auto!important}.modal-question-card{padding:18px!important;min-height:0!important}.modal-question-card .option{touch-action:manipulation;cursor:pointer}
+
+/* AI assistant visibility and chat layout fix */
+#thakur-ai-box{display:none !important;flex-direction:column;background:#11152d;border:1px solid #454c79;border-radius:18px;box-shadow:0 25px 70px rgba(0,0,0,.55)}
+#thakur-ai-box.show{display:flex !important}
+#thakur-ai-box .ts-ai-title{flex:0 0 auto;border-radius:17px 17px 0 0}
+#thakur-ai-box .ts-ai-title small{display:block;font-size:10px;color:#d8eaff;margin-top:2px;opacity:.8}
+#thakur-ai-box #ts-ai-chat{display:flex;flex:1;flex-direction:column;gap:10px;padding:12px;min-height:0;overflow-y:auto}
+#thakur-ai-box .ts-ai-row{display:flex;gap:8px;padding:10px;border-top:1px solid rgba(255,255,255,.1);background:#12162f}
+#thakur-ai-box .ts-ai-row input{flex:1;min-width:0;padding:10px}
+#thakur-ai-box .ts-ai-row button{border:0;border-radius:10px;padding:0 14px;font-weight:700;background:linear-gradient(100deg,#52d9e8,#9c95ff);color:#101228;cursor:pointer}
+#thakur-ai-box .ts-ai-row button:disabled{opacity:.6}
+#thakur-ai-box .ts-ai-bot,#thakur-ai-box .ts-ai-user{max-width:90%;padding:10px 12px;border-radius:13px;font-size:14px;line-height:1.5;white-space:pre-wrap}
+#thakur-ai-box .ts-ai-bot{align-self:flex-start;background:#222943}
+#thakur-ai-box .ts-ai-user{align-self:flex-end;background:#5f42d8}
+#thakur-ai-tab{z-index:2147483647}
