@@ -23,12 +23,13 @@ body.ai-open{overflow:hidden}
 #ts-ai-chat{min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
 #ts-ai-input{font-size:16px}
 
-/* Flag button + compact flag modal */
-.flag-btn{border:1px solid #555b83;background:#171a35;color:#cfd4ee;border-radius:9px;padding:6px 10px;font-size:11px;cursor:pointer;margin:4px 0 12px}
-.flag-btn:hover{border-color:#ff9aaf;color:#fff}
-.flag-modal{position:fixed;inset:0;display:none;z-index:2147483647;align-items:center;justify-content:center;padding:18px}
-.flag-modal.show{display:flex}.flag-backdrop{position:absolute;inset:0;background:rgba(5,7,20,.62);backdrop-filter:blur(3px)}
-.flag-window{position:relative;width:min(360px,calc(100vw - 32px));background:#171a35;border:1px solid #4b527e;border-radius:16px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.5);z-index:1}
-.flag-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.flag-head button{border:0;background:none;color:#fff;font-size:24px;cursor:pointer}
-.flag-window p{margin:8px 0;color:#b0b7d6;font-size:13px}.flag-window select,.flag-window textarea{width:100%;margin:7px 0;background:#10132b;border:1px solid #30365d;color:#f6f7ff;border-radius:10px;padding:11px}
-.flag-window textarea{height:82px;resize:vertical}.flag-window .btn{width:100%;margin-top:6px}
+
+/* Separate question window: no page jump, no inline question expansion. */
+body.quiz-open{overflow:hidden}
+.quiz-modal{position:fixed;inset:0;display:none;z-index:2147483645;align-items:center;justify-content:center;padding:14px;background:rgba(5,7,20,.72);backdrop-filter:blur(5px)}
+.quiz-modal.show{display:flex}.quiz-modal-backdrop{position:absolute;inset:0}
+.quiz-modal-window{position:relative;width:min(900px,calc(100vw - 24px));height:min(88vh,760px);display:flex;flex-direction:column;background:#11152d;border:1px solid #454c79;border-radius:20px;box-shadow:0 25px 80px rgba(0,0,0,.55);overflow:hidden;z-index:1}
+.quiz-modal-head{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:13px 17px;background:linear-gradient(135deg,#201653,#103c58);border-bottom:1px solid rgba(255,255,255,.12)}
+.quiz-modal-head b{display:block;font:700 17px Manrope}.quiz-modal-head span{display:block;color:#aeb6d8;font-size:11px;margin-top:2px}.quiz-modal-head button{width:40px;height:40px;border-radius:50%;border:1px solid #586087;background:transparent;color:#fff;font-size:27px;cursor:pointer}
+#quizModalBody{flex:1;min-height:0;overflow:auto;padding:16px}.quiz-modal .quiz-card{margin:0;min-height:0}.quiz-modal .quiz-footer{padding:0 3px 3px}
+@media(max-width:600px){.quiz-modal{padding:0}.quiz-modal-window{width:100%;height:100%;border-radius:0}.quiz-modal-head{padding-top:max(12px,env(safe-area-inset-top))}.quiz-modal #quizCard{padding:18px}.quiz-modal .question-text{font-size:17px}.quiz-modal .options{grid-template-columns:1fr}}

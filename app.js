@@ -247,6 +247,22 @@ function fillPracticeSubjects(){
 }
 $("examSelect").addEventListener("change",fillPracticeSubjects); fillPracticeSubjects();
 
+// Question modal: practice opens in a separate fixed window instead of expanding in the page.
+(function(){
+  const card=document.getElementById('quizCard');
+  if(!card || document.getElementById('quizModal')) return;
+  const modal=document.createElement('div');
+  modal.id='quizModal'; modal.className='quiz-modal'; modal.setAttribute('aria-hidden','true');
+  modal.innerHTML='<div class="quiz-modal-backdrop" id="quizModalBackdrop"></div><div class="quiz-modal-window"><div class="quiz-modal-head"><div><b>Practice Question</b><span id="quizModalTitle">Class 11</span></div><button id="quizModalClose" type="button" aria-label="Close questions">×</button></div><div id="quizModalBody"></div></div>';
+  document.body.appendChild(modal);
+  document.getElementById('quizModalBody').appendChild(card);
+  function openQuizModal(){ modal.classList.add('show'); modal.setAttribute('aria-hidden','false'); document.body.classList.add('quiz-open'); }
+  function closeQuizModal(){ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); document.body.classList.remove('quiz-open'); }
+  window.openQuizModal=openQuizModal;
+  document.getElementById('quizModalClose').addEventListener('click',closeQuizModal);
+  document.getElementById('quizModalBackdrop').addEventListener('click',closeQuizModal);
+})();
+
 $("startQuiz").addEventListener("click",()=>{
  const exam=$("examSelect").value, subject=$("practiceSubject").value;
  const setNo=Number($("setSelect").value||1);
@@ -277,12 +293,12 @@ $("startQuiz").addEventListener("click",()=>{
  }
  activeQuestions=shuffle(activeQuestions);
  if(!activeQuestions.length){$("quizCard").innerHTML=`<div class="quiz-welcome"><h3>Not enough questions for this selection</h3><p>Choose All difficulty or another subject.</p></div>`;$("quizProgress").textContent="No questions";return;}
- questionIndex=0;answered=false;renderQuestion();
+ questionIndex=0;answered=false;renderQuestion(); if(window.openQuizModal) window.openQuizModal();
 });
 function renderQuestion(){
  const q=activeQuestions[questionIndex]; answered=false;
  $("quizProgress").textContent=`Question ${questionIndex+1} of ${activeQuestions.length}`;
- $("quizCard").innerHTML=`<div class="question-top"><span>${q.exam} · ${q.subject} · ${q.difficulty}</span><span>${escapeHtml(q.chapter)}</span></div><div class="question-text">${questionIndex+1}. ${escapeHtml(q.q)}</div><button class="flag-btn" id="flagQuestion" type="button" title="Flag this question">🚩 Flag</button><div class="options">${q.options.map((o,i)=>`<button class="option" data-index="${i}">${String.fromCharCode(65+i)}. ${escapeHtml(o)}</button>`).join("")}</div><div id="feedback"></div><div class="next-row"><button class="btn primary" id="nextQuestion" disabled>${questionIndex===activeQuestions.length-1?"Finish set":"Next question"} →</button></div>`;
+ $("quizCard").innerHTML=`<div class="question-top"><span>${q.exam} · ${q.subject} · ${q.difficulty}</span><span>${escapeHtml(q.chapter)}</span></div><div class="question-text">${questionIndex+1}. ${escapeHtml(q.q)}</div><div class="options">${q.options.map((o,i)=>`<button class="option" data-index="${i}">${String.fromCharCode(65+i)}. ${escapeHtml(o)}</button>`).join("")}</div><div id="feedback"></div><div class="next-row"><button class="btn primary" id="nextQuestion" disabled>${questionIndex===activeQuestions.length-1?"Finish set":"Next question"} →</button></div>`;
  document.querySelectorAll(".option").forEach(btn=>btn.addEventListener("click",()=>answerQuestion(Number(btn.dataset.index))));
  $("nextQuestion").addEventListener("click",()=>{if(!answered)return;if(questionIndex<activeQuestions.length-1){questionIndex++;renderQuestion();}else finishQuiz();});
 }
@@ -297,7 +313,7 @@ function finishQuiz(){
  const next=current<30?current+1:1;
  $("quizCard").innerHTML=`<div class="quiz-welcome"><span class="quiz-icon">✓</span><h3>Practice set complete!</h3><p>Great work! Your current total is <b>${score} points</b>.</p><div class="next-set-card"><div><small>NEXT PRACTICE SET</small><strong>Set ${next} of 30</strong><span>Continue with the next set instantly.</span></div><button class="btn primary" id="nextSetBtn">Start Set ${next} →</button></div><button class="btn ghost" id="again">Restart Set ${current}</button></div>`;
  $("quizProgress").textContent=`Set ${current} completed · Next: Set ${next}`;
- $("nextSetBtn").addEventListener("click",()=>{ $("setSelect").value=String(next); $("startQuiz").click(); document.getElementById("practice").scrollIntoView({behavior:"smooth",block:"start"}); });
+ $("nextSetBtn").addEventListener("click",()=>{ $("setSelect").value=String(next); $("startQuiz").click();  });
  $("again").addEventListener("click",()=>$("startQuiz").click()); saveLeaderboard();
 }
 
@@ -322,25 +338,3 @@ function renderLeaderboard(){
 }
 saveLeaderboard();
 
-// Compact flag/report window for the current question.
-(function(){
-  function openFlag(){
-    const m=document.getElementById('flagModal'); if(!m)return;
-    m.classList.add('show'); m.setAttribute('aria-hidden','false');
-    const r=document.getElementById('flagReason'); if(r)r.focus();
-  }
-  function closeFlag(){const m=document.getElementById('flagModal');if(!m)return;m.classList.remove('show');m.setAttribute('aria-hidden','true');}
-  document.addEventListener('click',function(e){
-    if(e.target && e.target.id==='flagQuestion') openFlag();
-    if(e.target && (e.target.id==='flagClose'||e.target.id==='flagBackdrop')) closeFlag();
-    if(e.target && e.target.id==='flagSubmit'){
-      const reason=document.getElementById('flagReason')?.value||'Other';
-      const q=activeQuestions[questionIndex];
-      const reports=JSON.parse(localStorage.getItem('ts_flagged_questions')||'[]');
-      reports.push({question:q?.q||'',reason,at:new Date().toISOString()});
-      localStorage.setItem('ts_flagged_questions',JSON.stringify(reports));
-      closeFlag();
-      alert('Thanks! Question flagged for review.');
-    }
-  });
-})();
