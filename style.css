@@ -33,3 +33,5 @@ body.quiz-open{overflow:hidden}
 .quiz-modal-head b{display:block;font:700 17px Manrope}.quiz-modal-head span{display:block;color:#aeb6d8;font-size:11px;margin-top:2px}.quiz-modal-head button{width:40px;height:40px;border-radius:50%;border:1px solid #586087;background:transparent;color:#fff;font-size:27px;cursor:pointer}
 #quizModalBody{flex:1;min-height:0;overflow:auto;padding:16px}.quiz-modal .quiz-card{margin:0;min-height:0}.quiz-modal .quiz-footer{padding:0 3px 3px}
 @media(max-width:600px){.quiz-modal{padding:0}.quiz-modal-window{width:100%;height:100%;border-radius:0}.quiz-modal-head{padding-top:max(12px,env(safe-area-inset-top))}.quiz-modal #quizCard{padding:18px}.quiz-modal .question-text{font-size:17px}.quiz-modal .options{grid-template-columns:1fr}}
+
+.quiz-modal{touch-action:auto!important}.quiz-modal-window{pointer-events:auto!important}.quiz-modal-backdrop{pointer-events:auto!important}.modal-question-card{padding:18px!important;min-height:0!important}.modal-question-card .option{touch-action:manipulation;cursor:pointer}

@@ -247,75 +247,128 @@ function fillPracticeSubjects(){
 }
 $("examSelect").addEventListener("change",fillPracticeSubjects); fillPracticeSubjects();
 
-// Question modal: practice opens in a separate fixed window instead of expanding in the page.
+// Question practice engine: isolated fixed modal. Never expands the page or depends on the page card.
 (function(){
-  const card=document.getElementById('quizCard');
-  if(!card || document.getElementById('quizModal')) return;
-  const modal=document.createElement('div');
-  modal.id='quizModal'; modal.className='quiz-modal'; modal.setAttribute('aria-hidden','true');
-  modal.innerHTML='<div class="quiz-modal-backdrop" id="quizModalBackdrop"></div><div class="quiz-modal-window"><div class="quiz-modal-head"><div><b>Practice Question</b><span id="quizModalTitle">Class 11</span></div><button id="quizModalClose" type="button" aria-label="Close questions">×</button></div><div id="quizModalBody"></div></div>';
-  document.body.appendChild(modal);
-  document.getElementById('quizModalBody').appendChild(card);
-  function openQuizModal(){ modal.classList.add('show'); modal.setAttribute('aria-hidden','false'); document.body.classList.add('quiz-open'); }
-  function closeQuizModal(){ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); document.body.classList.remove('quiz-open'); }
-  window.openQuizModal=openQuizModal;
-  document.getElementById('quizModalClose').addEventListener('click',closeQuizModal);
-  document.getElementById('quizModalBackdrop').addEventListener('click',closeQuizModal);
-})();
+  const startBtn=document.getElementById("startQuiz");
+  const card=document.getElementById("quizCard");
+  if(!startBtn || !card) return;
 
-$("startQuiz").addEventListener("click",()=>{
- const exam=$("examSelect").value, subject=$("practiceSubject").value;
- const setNo=Number($("setSelect").value||1);
- const diff=$("difficulty").value;
- const all=questions.filter(q=>q.exam===exam);
- const filtered=all.filter(q=>diff==="All"||q.difficulty===diff);
- const take=(pool,start,count)=>pool.slice(start,start+count).map(q=>({...q}));
- const subjectPool=(sub)=>filtered.filter(q=>q.subject===sub);
- activeQuestions=[];
- if(subject==="All subjects"){
-   if(exam==="JEE"){
-     const counts={Physics:setNo<=10?34:33,Chemistry:setNo<=10?33:setNo<=20?34:33,Mathematics:setNo<=20?33:34};
-     const starts={
-       Physics:setNo<=10?(setNo-1)*34:340+(setNo-11)*33,
-       Chemistry:setNo<=10?(setNo-1)*33:setNo<=20?330+(setNo-11)*34:670+(setNo-21)*33,
-       Mathematics:setNo<=20?(setNo-1)*33:660+(setNo-21)*34
-     };
-     Object.keys(counts).forEach(sub=>activeQuestions.push(...take(subjectPool(sub),starts[sub],counts[sub])));
-   } else {
-     const counts={Physics:45,Chemistry:45,Biology:90};
-     Object.keys(counts).forEach(sub=>activeQuestions.push(...take(subjectPool(sub),(setNo-1)*counts[sub],counts[sub])));
-   }
- } else if(subject==="Mix"){
-   const pool=filtered.filter(q=>q.exam===exam);
-   activeQuestions=take(pool,(setNo-1)*25,25);
- } else {
-   activeQuestions=take(subjectPool(subject),(setNo-1)*25,25);
- }
- activeQuestions=shuffle(activeQuestions);
- if(!activeQuestions.length){$("quizCard").innerHTML=`<div class="quiz-welcome"><h3>Not enough questions for this selection</h3><p>Choose All difficulty or another subject.</p></div>`;$("quizProgress").textContent="No questions";return;}
- questionIndex=0;answered=false;renderQuestion(); if(window.openQuizModal) window.openQuizModal();
-});
-function renderQuestion(){
- const q=activeQuestions[questionIndex]; answered=false;
- $("quizProgress").textContent=`Question ${questionIndex+1} of ${activeQuestions.length}`;
- $("quizCard").innerHTML=`<div class="question-top"><span>${q.exam} · ${q.subject} · ${q.difficulty}</span><span>${escapeHtml(q.chapter)}</span></div><div class="question-text">${questionIndex+1}. ${escapeHtml(q.q)}</div><div class="options">${q.options.map((o,i)=>`<button class="option" data-index="${i}">${String.fromCharCode(65+i)}. ${escapeHtml(o)}</button>`).join("")}</div><div id="feedback"></div><div class="next-row"><button class="btn primary" id="nextQuestion" disabled>${questionIndex===activeQuestions.length-1?"Finish set":"Next question"} →</button></div>`;
- document.querySelectorAll(".option").forEach(btn=>btn.addEventListener("click",()=>answerQuestion(Number(btn.dataset.index))));
- $("nextQuestion").addEventListener("click",()=>{if(!answered)return;if(questionIndex<activeQuestions.length-1){questionIndex++;renderQuestion();}else finishQuiz();});
-}
-function answerQuestion(choice){
- if(answered)return; answered=true; const q=activeQuestions[questionIndex], correct=choice===q.answer; score+=correct?4:-1; localStorage.setItem("ts_score",String(score)); $("pointsDisplay").textContent=score;
- document.querySelectorAll(".option").forEach((b,i)=>{b.disabled=true;if(i===q.answer)b.classList.add("correct");else if(i===choice)b.classList.add("wrong");});
- $("feedback").innerHTML=`<div class="explanation"><b>${correct?"Correct! +4 points":"Not quite. −1 point"}</b><br>${escapeHtml(q.explain)}</div>`;
- $("nextQuestion").disabled=false; saveLeaderboard();
-}
-function finishQuiz(){
- const current=Number($("setSelect").value||1);
- const next=current<30?current+1:1;
- $("quizCard").innerHTML=`<div class="quiz-welcome"><span class="quiz-icon">✓</span><h3>Practice set complete!</h3><p>Great work! Your current total is <b>${score} points</b>.</p><div class="next-set-card"><div><small>NEXT PRACTICE SET</small><strong>Set ${next} of 30</strong><span>Continue with the next set instantly.</span></div><button class="btn primary" id="nextSetBtn">Start Set ${next} →</button></div><button class="btn ghost" id="again">Restart Set ${current}</button></div>`;
- $("quizProgress").textContent=`Set ${current} completed · Next: Set ${next}`;
- $("nextSetBtn").addEventListener("click",()=>{ $("setSelect").value=String(next); $("startQuiz").click();  });
- $("again").addEventListener("click",()=>$("startQuiz").click()); saveLeaderboard();
-}
+  let modal=document.getElementById("quizModal");
+  if(!modal){
+    modal=document.createElement("div");
+    modal.id="quizModal";
+    modal.className="quiz-modal";
+    modal.setAttribute("aria-hidden","true");
+    modal.innerHTML='<div class="quiz-modal-backdrop"></div>'+
+      '<div class="quiz-modal-window" role="dialog" aria-modal="true">'+
+      '<div class="quiz-modal-head"><div><b>Thakur Studys Practice</b><span id="quizModalTitle">Class 11</span></div>'+
+      '<button id="quizModalClose" type="button" aria-label="Close questions">×</button></div>'+
+      '<div id="quizModalBody"></div></div>';
+    document.body.appendChild(modal);
+  }
+  const body=modal.querySelector("#quizModalBody");
+  const close=()=>{modal.classList.remove("show");modal.setAttribute("aria-hidden","true");document.body.classList.remove("quiz-open");};
+  const open=()=>{modal.classList.add("show");modal.setAttribute("aria-hidden","false");document.body.classList.add("quiz-open");};
+  modal.querySelector("#quizModalClose").onclick=close;
+  modal.querySelector(".quiz-modal-backdrop").onclick=close;
+
+  function makePool(){
+    const exam=document.getElementById("examSelect").value;
+    const subject=document.getElementById("practiceSubject").value;
+    const setNo=Number(document.getElementById("setSelect").value||1);
+    const diff=document.getElementById("difficulty").value;
+    const filtered=questions.filter(q=>q.exam===exam && (diff==="All" || q.difficulty===diff));
+    const bySub=s=>filtered.filter(q=>q.subject===s);
+    const take=(arr,start,count)=>arr.slice(start,start+count).map(q=>({...q}));
+    let out=[];
+    if(subject==="All subjects"){
+      if(exam==="JEE"){
+        const plan=[["Physics",34],["Chemistry",33],["Mathematics",33]];
+        const offsets={
+          Physics: setNo<=10?(setNo-1)*34:340+(setNo-11)*33,
+          Chemistry: setNo<=10?(setNo-1)*33:setNo<=20?330+(setNo-11)*34:670+(setNo-21)*33,
+          Mathematics: setNo<=20?(setNo-1)*33:660+(setNo-21)*34
+        };
+        plan.forEach(([s,c])=>out.push(...take(bySub(s),offsets[s],c)));
+      }else{
+        [["Physics",45],["Chemistry",45],["Biology",90]].forEach(([s,c])=>out.push(...take(bySub(s),(setNo-1)*c,c)));
+      }
+    }else if(subject==="Mix"){
+      const all=filtered;
+      out=take(all,(setNo-1)*25,25);
+    }else{
+      out=take(bySub(subject),(setNo-1)*25,25);
+    }
+    return shuffle(out);
+  }
+
+  function renderQuestion(){
+    const q=activeQuestions[questionIndex];
+    if(!q){ body.innerHTML='<div class="quiz-welcome"><h3>No question available</h3><p>Please choose another set or subject.</p></div>';return; }
+    answered=false;
+    document.getElementById("quizProgress").textContent=`Question ${questionIndex+1} of ${activeQuestions.length}`;
+    document.getElementById("quizModalTitle").textContent=`${q.exam} · ${q.subject} · Set ${document.getElementById("setSelect").value}`;
+    body.innerHTML=`<div class="quiz-card modal-question-card">
+      <div class="question-top"><span>${escapeHtml(q.exam)} · ${escapeHtml(q.subject)} · ${escapeHtml(q.difficulty||"All")}</span><span>${escapeHtml(q.chapter||"Class 11")}</span></div>
+      <div class="question-text">${questionIndex+1}. ${escapeHtml(q.q)}</div>
+      <div class="options">${q.options.map((o,i)=>`<button type="button" class="option" data-index="${i}">${String.fromCharCode(65+i)}. ${escapeHtml(o)}</button>`).join("")}</div>
+      <div id="feedback"></div>
+      <div class="next-row"><button type="button" class="btn primary" id="nextQuestion" disabled>${questionIndex===activeQuestions.length-1?"Finish set":"Next question"} →</button></div>
+    </div>`;
+    body.querySelectorAll(".option").forEach(btn=>btn.onclick=()=>answerQuestion(Number(btn.dataset.index)));
+    body.querySelector("#nextQuestion").onclick=()=>{
+      if(!answered)return;
+      if(questionIndex<activeQuestions.length-1){questionIndex++;renderQuestion();}
+      else finishQuiz();
+    };
+  }
+
+  function answerQuestion(choice){
+    if(answered)return;
+    answered=true;
+    const q=activeQuestions[questionIndex], correct=choice===q.answer;
+    score+=correct?4:-1;
+    localStorage.setItem("ts_score",String(score));
+    if(document.getElementById("pointsDisplay")) document.getElementById("pointsDisplay").textContent=score;
+    body.querySelectorAll(".option").forEach((b,i)=>{
+      b.disabled=true;
+      if(i===q.answer)b.classList.add("correct");
+      else if(i===choice)b.classList.add("wrong");
+    });
+    body.querySelector("#feedback").innerHTML=`<div class="explanation"><b>${correct?"Correct! +4 points":"Not quite. −1 point"}</b><br>${escapeHtml(q.explain||"Review the concept and try the next question.")}</div>`;
+    body.querySelector("#nextQuestion").disabled=false;
+    if(typeof saveLeaderboard==="function")saveLeaderboard();
+  }
+
+  function finishQuiz(){
+    const current=Number(document.getElementById("setSelect").value||1);
+    const next=current<30?current+1:1;
+    document.getElementById("quizProgress").textContent=`Set ${current} completed · Next: Set ${next}`;
+    body.innerHTML=`<div class="quiz-welcome"><span class="quiz-icon">✓</span><h3>Practice set complete!</h3>
+      <p>Great work! Your current total is <b>${score} points</b>.</p>
+      <div class="next-set-card"><div><small>NEXT PRACTICE SET</small><strong>Set ${next} of 30</strong><span>Continue with the next set instantly.</span></div>
+      <button type="button" class="btn primary" id="nextSetBtn">Start Set ${next} →</button></div>
+      <button type="button" class="btn ghost" id="again">Restart Set ${current}</button></div>`;
+    body.querySelector("#nextSetBtn").onclick=()=>{document.getElementById("setSelect").value=String(next);startBtn.click();};
+    body.querySelector("#again").onclick=()=>startBtn.click();
+    if(typeof saveLeaderboard==="function")saveLeaderboard();
+  }
+
+  startBtn.onclick=function(e){
+    e.preventDefault();
+    activeQuestions=makePool();
+    if(!activeQuestions.length){
+      body.innerHTML='<div class="quiz-welcome"><h3>Questions are unavailable for this selection</h3><p>Choose All levels or another subject/set.</p></div>';
+      open();
+      return;
+    }
+    questionIndex=0;
+    answered=false;
+    renderQuestion();
+    open();
+  };
+  window.openQuizModal=open;
+})();
 
 function renderFormulas(subject){
  currentSubjectFormula=subject;
