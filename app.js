@@ -282,7 +282,7 @@ $("startQuiz").addEventListener("click",()=>{
 function renderQuestion(){
  const q=activeQuestions[questionIndex]; answered=false;
  $("quizProgress").textContent=`Question ${questionIndex+1} of ${activeQuestions.length}`;
- $("quizCard").innerHTML=`<div class="question-top"><span>${q.exam} · ${q.subject} · ${q.difficulty}</span><span>${escapeHtml(q.chapter)}</span></div><div class="question-text">${questionIndex+1}. ${escapeHtml(q.q)}</div><div class="options">${q.options.map((o,i)=>`<button class="option" data-index="${i}">${String.fromCharCode(65+i)}. ${escapeHtml(o)}</button>`).join("")}</div><div id="feedback"></div><div class="next-row"><button class="btn primary" id="nextQuestion" disabled>${questionIndex===activeQuestions.length-1?"Finish set":"Next question"} →</button></div>`;
+ $("quizCard").innerHTML=`<div class="question-top"><span>${q.exam} · ${q.subject} · ${q.difficulty}</span><span>${escapeHtml(q.chapter)}</span></div><div class="question-text">${questionIndex+1}. ${escapeHtml(q.q)}</div><button class="flag-btn" id="flagQuestion" type="button" title="Flag this question">🚩 Flag</button><div class="options">${q.options.map((o,i)=>`<button class="option" data-index="${i}">${String.fromCharCode(65+i)}. ${escapeHtml(o)}</button>`).join("")}</div><div id="feedback"></div><div class="next-row"><button class="btn primary" id="nextQuestion" disabled>${questionIndex===activeQuestions.length-1?"Finish set":"Next question"} →</button></div>`;
  document.querySelectorAll(".option").forEach(btn=>btn.addEventListener("click",()=>answerQuestion(Number(btn.dataset.index))));
  $("nextQuestion").addEventListener("click",()=>{if(!answered)return;if(questionIndex<activeQuestions.length-1){questionIndex++;renderQuestion();}else finishQuiz();});
 }
@@ -321,3 +321,26 @@ function renderLeaderboard(){
  $("leaderRows").innerHTML=entries.length?entries.slice(0,20).map((x,i)=>`<div class="leader-row"><span class="rank">${i+1}</span><span><span class="leader-name">${escapeHtml(x.name)}${x.name===player?" (you)":""}</span><span class="leader-sub">Practice learner</span></span><span class="leader-points">${x.score} pts</span></div>`).join(""):"<p class='small'>No scores yet. Save a display name and complete a practice question to appear here.</p>";
 }
 saveLeaderboard();
+
+// Compact flag/report window for the current question.
+(function(){
+  function openFlag(){
+    const m=document.getElementById('flagModal'); if(!m)return;
+    m.classList.add('show'); m.setAttribute('aria-hidden','false');
+    const r=document.getElementById('flagReason'); if(r)r.focus();
+  }
+  function closeFlag(){const m=document.getElementById('flagModal');if(!m)return;m.classList.remove('show');m.setAttribute('aria-hidden','true');}
+  document.addEventListener('click',function(e){
+    if(e.target && e.target.id==='flagQuestion') openFlag();
+    if(e.target && (e.target.id==='flagClose'||e.target.id==='flagBackdrop')) closeFlag();
+    if(e.target && e.target.id==='flagSubmit'){
+      const reason=document.getElementById('flagReason')?.value||'Other';
+      const q=activeQuestions[questionIndex];
+      const reports=JSON.parse(localStorage.getItem('ts_flagged_questions')||'[]');
+      reports.push({question:q?.q||'',reason,at:new Date().toISOString()});
+      localStorage.setItem('ts_flagged_questions',JSON.stringify(reports));
+      closeFlag();
+      alert('Thanks! Question flagged for review.');
+    }
+  });
+})();

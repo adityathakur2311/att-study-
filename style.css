@@ -15,3 +15,20 @@
 /* Side assistant: draggable anywhere on the viewport. */
 #thakur-ai-tab{position:fixed;right:10px;top:42%;z-index:2147483646;width:78px;min-height:78px;border:1px solid rgba(255,255,255,.25);border-radius:18px 0 0 18px;background:linear-gradient(135deg,#633fe0,#08bfe5);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:grab;box-shadow:0 10px 35px rgba(0,0,0,.35);touch-action:none;user-select:none}.robot-face{font-size:28px;line-height:1}.ts-ai-title{padding:13px 15px;background:linear-gradient(135deg,#6038df,#00a9d8);display:flex;justify-content:space-between;align-items:center}.ts-ai-title button{border:0;background:none;color:#fff;font-size:24px}.ts-ai-bot,.ts-ai-user{max-width:88%;padding:9px 11px;border-radius:12px;font-size:14px;line-height:1.45}.ts-ai-bot{background:#222943}.ts-ai-user{background:#5f42d8;align-self:flex-end}
 @media(max-width:600px){.reader-page{min-height:680px;padding:24px}.reader-page h3{font-size:26px}.reader-page>p{font-size:16px}.reader-head{padding:16px}.reader-foot{font-size:12px}.reader-pages{padding:12px 10px 60px}#thakur-ai-tab{right:8px;top:auto;bottom:120px;border-radius:16px;width:70px;min-height:70px}}
+
+/* Small, fixed AI window: opening it never scrolls the page. */
+body.ai-open{overflow:hidden}
+#thakur-ai-box{position:fixed !important;width:min(330px,calc(100vw - 28px));height:min(390px,62vh);right:14px;bottom:86px;max-height:62vh;overflow:hidden;z-index:2147483646}
+#thakur-ai-box .ts-ai-title{flex:0 0 auto}
+#ts-ai-chat{min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+#ts-ai-input{font-size:16px}
+
+/* Flag button + compact flag modal */
+.flag-btn{border:1px solid #555b83;background:#171a35;color:#cfd4ee;border-radius:9px;padding:6px 10px;font-size:11px;cursor:pointer;margin:4px 0 12px}
+.flag-btn:hover{border-color:#ff9aaf;color:#fff}
+.flag-modal{position:fixed;inset:0;display:none;z-index:2147483647;align-items:center;justify-content:center;padding:18px}
+.flag-modal.show{display:flex}.flag-backdrop{position:absolute;inset:0;background:rgba(5,7,20,.62);backdrop-filter:blur(3px)}
+.flag-window{position:relative;width:min(360px,calc(100vw - 32px));background:#171a35;border:1px solid #4b527e;border-radius:16px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.5);z-index:1}
+.flag-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.flag-head button{border:0;background:none;color:#fff;font-size:24px;cursor:pointer}
+.flag-window p{margin:8px 0;color:#b0b7d6;font-size:13px}.flag-window select,.flag-window textarea{width:100%;margin:7px 0;background:#10132b;border:1px solid #30365d;color:#f6f7ff;border-radius:10px;padding:11px}
+.flag-window textarea{height:82px;resize:vertical}.flag-window .btn{width:100%;margin-top:6px}
